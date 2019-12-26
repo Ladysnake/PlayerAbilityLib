@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "playerabilitylib",
+  "version": "${version}",
+  "name": "Pal",
+  "icon": "assets/playerabilitylib/icon.png",
+  "description": "Your good pal, helping with mod compat",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    "Pyrofab"
+  ],
+  "contact": {
+    "sources": "https://github.com/Ladysnake/Pal",
+    "issues": "https://github.com/Ladysnake/Pal/issues",
+    "discord": "ladysnake.glitch.me/discord"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.ladysnake.pal.Pal"
+    ]
+  },
+  "mixins": [
+    {
+      "environment": "*",
+      "config": "mixins.playerabilitylib.common.json"
+    }
+  ],
+  "depends": {
+    "fabric": "*"
+  },
+  "custom": {
+    "modmenu:api": true
+  }
+}

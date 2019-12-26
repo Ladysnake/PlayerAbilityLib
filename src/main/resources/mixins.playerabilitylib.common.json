@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.ladysnake.pal.impl.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7.11-SNAPSHOT",
+  "mixins": [
+    "PlayerEntityMixin",
+    "ServerPlayerInteractionManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
