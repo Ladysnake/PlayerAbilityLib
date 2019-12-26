@@ -51,6 +51,6 @@ public final class Pal implements ModInitializer {
         }, a -> a.allowFlying));
         registerAbility(VanillaAbilities.FLYING, player -> new VanillaToggleableAbility(VanillaAbilities.FLYING, player, (g, a, e) -> a.flying = e || g == GameMode.SPECTATOR, a -> a.flying));
         registerAbility(VanillaAbilities.CREATIVE_MODE, player -> new VanillaToggleableAbility(VanillaAbilities.CREATIVE_MODE, player, (g, a, e) -> a.creativeMode = e || g.isCreative(), a -> a.creativeMode));
-        registerAbility(VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, player -> new VanillaToggleableAbility(VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, player, (g, a, e) -> a.allowModifyWorld = !e && !g.shouldLimitWorldModification(), a -> a.allowModifyWorld));
+        registerAbility(VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, player -> new VanillaToggleableAbility(VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, player, (g, a, e) -> a.allowModifyWorld = !e && !g.shouldLimitWorldModification(), a -> !a.allowModifyWorld));
     }
 }
