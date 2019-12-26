@@ -48,7 +48,7 @@ public class SimpleToggleableAbility implements ToggleableAbility {
     }
 
     @Override
-    public boolean has(Identifier abilitySource) {
+    public boolean isProvidedBy(Identifier abilitySource) {
         return this.abilitySources.contains(abilitySource);
     }
 

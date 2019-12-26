@@ -29,7 +29,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PalAcces
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At("RETURN"))
-    private void abilitiesToTag(CompoundTag tag, CallbackInfo ci) {
+    private void writeAbilitiesToTag(CompoundTag tag, CallbackInfo ci) {
         palAbilities.toTag(tag);
     }
 

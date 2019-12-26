@@ -19,6 +19,10 @@ public final class PalRegistries {
         abilityRegistry.put(abilityId, factory);
     }
 
+    public static boolean isAbilityRegistered(Identifier abilityId) {
+        return abilityRegistry.containsKey(abilityId);
+    }
+
     public static Event<PlayerAbilityUpdatedCallback> getOrCreateUpdateEvent(Identifier id) {
         return events.computeIfAbsent(id, i -> EventFactory.createArrayBacked(PlayerAbilityUpdatedCallback.class,
             (listeners) -> (player, nowEnabled) -> {
@@ -27,5 +31,4 @@ public final class PalRegistries {
                 }
             }));
     }
-
 }

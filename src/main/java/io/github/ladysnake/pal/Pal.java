@@ -18,11 +18,15 @@ import java.util.function.Function;
  *  public static final Identifier SUIT_FLIGHT = new Identifier("flightsuit", "suit_flight");
  *
  *  public void onEquip(PlayerEntity player) {
- *      Pal.getAbilities(player).get(VanillaAbilities.ALLOW_FLYING).add(SUIT_FLIGHT);
+ *      if (!player.world.isClient) {
+ *          Pal.getAbilities(player).get(VanillaAbilities.ALLOW_FLYING).add(SUIT_FLIGHT);
+ *      }
  *  }
  *
  *  public void onUnequip(PlayerEntity player) {
- *      Pal.getAbilities(player).get(VanillaAbilities.ALLOW_FLYING).remove(SUIT_FLIGHT);
+ *      if (!player.world.isClient) {
+ *          Pal.getAbilities(player).get(VanillaAbilities.ALLOW_FLYING).remove(SUIT_FLIGHT);
+ *      }
  *  }
  * </code></pre>
  * Calling the {@code onEquip} and {@code onUnequip} methods of this example
@@ -34,12 +38,45 @@ import java.util.function.Function;
  */
 public final class Pal implements ModInitializer {
 
+    /**
+     * Retrieves a {@link PlayerAbilityView} for the given {@code player}.
+     *
+     * <p> The returned view can be used to query and update the status of
+     * any previously {@link #registerAbility(Identifier, Function) registered} ability.
+     *
+     * @param player an initialized player to get the abilities of
+     * @return a view for the player's abilities
+     */
+    public static PlayerAbilityView getAbilities(PlayerEntity player) {
+        return ((PalAccessor) player).getPalAbilities();
+    }
+
+    /**
+     * Registers a player ability that mods can interact with.
+     *
+     * <p> A registered {@link ToggleableAbility} will be accessible using {@link PlayerAbilityView#get(Identifier)}
+     * with the given {@code abilityId}. Said ability instance is attached to every player at construction time using
+     * the given {@code factory}.
+     *
+     * @param abilityId a unique identifier for the ability
+     * @param factory   a factory to create {@code ToggleableAbility} instances for every player
+     * @apiNote abilities must be registered during initialization.
+     * @see SimpleToggleableAbility
+     * @see #isAbilityRegistered(Identifier)
+     */
     public static void registerAbility(Identifier abilityId, Function<PlayerEntity, ToggleableAbility> factory) {
         PalRegistries.registerAbility(abilityId, factory);
     }
 
-    public static PlayerAbilityView getAbilities(PlayerEntity player) {
-        return ((PalAccessor) player).getPalAbilities();
+    /**
+     * Returns {@code true} if an ability has been registered with the given {@code abilityId}.
+     *
+     * @param abilityId a unique ability identifier to check for
+     * @return {@code true} if the ability has been registered
+     * @see #registerAbility(Identifier, Function)
+     */
+    public static boolean isAbilityRegistered(Identifier abilityId) {
+        return PalRegistries.isAbilityRegistered(abilityId);
     }
 
     @Override

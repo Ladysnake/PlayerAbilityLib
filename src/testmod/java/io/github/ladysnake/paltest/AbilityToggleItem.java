@@ -26,14 +26,14 @@ class AbilityToggleItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ToggleableAbility ability = Pal.getAbilities(user).get(abilityId);
         if (!world.isClient) {
-            if (ability.has(abilitySource)) {
+            if (ability.isProvidedBy(abilitySource)) {
                 ability.remove(abilitySource);
             } else {
                 ability.add(abilitySource);
             }
             user.addChatMessage(new LiteralText("")
                     .append(new LiteralText(abilitySource.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
-                    .append(ability.has(abilitySource) ? new LiteralText(" added").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.setColor(Formatting.RED)))
+                    .append(ability.isProvidedBy(abilitySource) ? new LiteralText(" added").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.setColor(Formatting.RED)))
                     .append(" (")
                     .append(new LiteralText(abilityId.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
                     .append(" is ")
