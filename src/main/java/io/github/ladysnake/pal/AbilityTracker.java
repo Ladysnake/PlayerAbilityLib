@@ -32,7 +32,7 @@ public interface AbilityTracker {
      *
      * @param abilitySource the source granting the ability
      */
-    void grant(AbilitySource abilitySource);
+    void addSource(AbilitySource abilitySource);
 
     /**
      * Removes a source for this tracker's ability.
@@ -42,10 +42,10 @@ public interface AbilityTracker {
      *
      * @param abilitySource the source granting the ability
      */
-    void revoke(AbilitySource abilitySource);
+    void removeSource(AbilitySource abilitySource);
 
     /**
-     * Returns {@code true} if this tracker's ability is currently provided by the given {@code abilitySource}.
+     * Returns {@code true} if this tracker's ability is currently granted by the given {@code abilitySource}.
      *
      * @param abilitySource the source granting the ability
      * @return {@code true} if this tracker's ability is provided by {@code abilitySource}

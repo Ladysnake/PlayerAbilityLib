@@ -32,10 +32,10 @@ public class AbilityToggleItem extends Item {
                 abilitySource.grantTo(user, this.ability);
             }
             user.addChatMessage(new LiteralText("")
-                    .append(new LiteralText(abilitySource.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
+                    .append(new LiteralText(abilitySource.getId().toString()).styled(s -> s.setColor(Formatting.YELLOW)))
                     .append(abilitySource.grants(user, this.ability) ? new LiteralText(" added").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.setColor(Formatting.RED)))
                     .append(" (")
-                    .append(new LiteralText(this.ability.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
+                    .append(new LiteralText(this.ability.getId().toString()).styled(s -> s.setColor(Formatting.YELLOW)))
                     .append(" is ")
                     .append(ability.isEnabledFor(user) ? new LiteralText("enabled").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText("disabled").styled(s -> s.setColor(Formatting.RED)))
                     .append(")"), false);

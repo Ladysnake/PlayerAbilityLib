@@ -26,7 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
 
-import java.util.UUID;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public final class VanillaAbilityTracker extends SimpleAbilityTracker {
@@ -42,6 +42,10 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
     @Override
     protected void updateState(boolean enabled) {
         super.updateState(enabled);
+        updateBacking(enabled);
+    }
+
+    private void updateBacking(boolean enabled) {
         this.setter.set(getGamemode(this.player), this.player.abilities, enabled);
     }
 
@@ -55,17 +59,26 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
         return this.getter.test(this.player.abilities);
     }
 
-    private static GameMode getGamemode(PlayerEntity player) {
-        if (player.world.isClient) {
-            return getClientGameMode(player.getGameProfile().getId());
-        } else {
-            return ((ServerPlayerEntity) player).interactionManager.getGameMode();
+    public void checkConflict() {
+        boolean enabled = this.isEnabled();
+        this.updateBacking(this.shouldBeEnabled()); // avoid false positives from gamemode changes
+        boolean expected = this.isEnabled();
+        if (enabled != expected) {
+            // Attempt to satisfy both compliant and rogue mods
+            // If the external state and the Pal state are conflicting, one of them tries to make this ability enabled
+            this.updateState(true);
+            PalInternals.LOGGER.warn("[Pal] Player ability {} was updated externally (expected {}, was {}).",
+                this.ability.getId(), expected ? "enabled" : "disabled", enabled ? "enabled" : "disabled", new RuntimeException("stacktrace"));
         }
     }
 
-    private static GameMode getClientGameMode(UUID uuid) {
-        PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(uuid);
-        return playerListEntry != null ? playerListEntry.getGameMode() : GameMode.NOT_SET;
+    private static GameMode getGamemode(PlayerEntity player) {
+        if (player.world.isClient) {
+            PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getGameProfile().getId());
+            return playerListEntry != null ? playerListEntry.getGameMode() : GameMode.NOT_SET;
+        } else {
+            return ((ServerPlayerEntity) player).interactionManager.getGameMode();
+        }
     }
 
     @FunctionalInterface

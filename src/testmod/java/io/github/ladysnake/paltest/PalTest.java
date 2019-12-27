@@ -16,6 +16,7 @@ public final class PalTest implements ModInitializer {
     @Override
     public void onInitialize() {
         PalTestAbilities.init();
+        Registry.register(Registry.ITEM, id("bad_charm"), new BadFlightItem(new Item.Settings()));
         Registry.register(Registry.ITEM, id("flight_charm"), new AbilityToggleItem(new Item.Settings(), VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
         Registry.register(Registry.ITEM, id("kryptonite"), new AbilityToggleItem(new Item.Settings(), PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
         Registry.register(Registry.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectType.BENEFICIAL, 0xFFFFFF));

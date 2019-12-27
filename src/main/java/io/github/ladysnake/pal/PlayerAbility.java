@@ -44,7 +44,7 @@ public final class PlayerAbility {
     }
 
     public boolean isEnabledFor(PlayerEntity player) {
-        return PlayerAbilityView.of(player).get(this).isEnabled();
+        return this.getTracker(player).isEnabled();
     }
 
     public AbilityTracker createTracker(PlayerEntity player) {

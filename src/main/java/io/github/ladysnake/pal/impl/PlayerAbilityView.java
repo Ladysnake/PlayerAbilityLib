@@ -45,6 +45,8 @@ public interface PlayerAbilityView {
         return (PlayerAbilityView) player;
     }
 
+    Iterable<PlayerAbility> listPalAbilities();
+
     /**
      * Gets a handle for a given ability in the form of a {@link AbilityTracker}
      *
@@ -52,7 +54,7 @@ public interface PlayerAbilityView {
      * @return a toggleable handle for the ability
      * @throws IllegalArgumentException if {@code abilityId} has not been registered
      * @see VanillaAbilities
-     * @see Pal#isAbilityRegistered(PlayerAbility)
+     * @see Pal#isAbilityRegistered(Identifier)
      */
     AbilityTracker get(PlayerAbility abilityId);
 
@@ -62,5 +64,6 @@ public interface PlayerAbilityView {
      * @param syncVanilla {@code true} if vanilla {@link PlayerAbilities} should be synchronized as a result of this call
      * @see AbilityTracker#refresh(boolean)
      */
-    void refreshAll(boolean syncVanilla);
+    void refreshAllPalAbilities(boolean syncVanilla);
+
 }

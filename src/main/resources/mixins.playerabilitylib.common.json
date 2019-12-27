@@ -5,6 +5,7 @@
   "minVersion": "0.7.11-SNAPSHOT",
   "mixins": [
     "PlayerEntityMixin",
+    "ServerPlayerEntityMixin",
     "ServerPlayerInteractionManagerMixin"
   ],
   "injectors": {

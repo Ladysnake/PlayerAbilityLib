@@ -51,7 +51,7 @@ public class SimpleAbilityTracker implements AbilityTracker {
     }
 
     @Override
-    public void grant(AbilitySource abilitySource) {
+    public void addSource(AbilitySource abilitySource) {
         boolean wasEmpty = this.abilitySources.isEmpty();
         if (this.abilitySources.add(abilitySource) && wasEmpty) {
             if (PlayerAbilityEnableCallback.EVENT.invoker().allow(this.player, this.ability, abilitySource)) {
@@ -62,7 +62,7 @@ public class SimpleAbilityTracker implements AbilityTracker {
     }
 
     @Override
-    public void revoke(AbilitySource abilitySource) {
+    public void removeSource(AbilitySource abilitySource) {
         if (this.abilitySources.remove(abilitySource) && this.abilitySources.isEmpty()) {
             this.updateState(false);
             this.sync();
@@ -76,6 +76,13 @@ public class SimpleAbilityTracker implements AbilityTracker {
 
     @Override
     public void refresh(boolean syncVanilla) {
+        this.updateState(this.shouldBeEnabled());
+        if (syncVanilla || !(this instanceof VanillaAbilityTracker)) {
+            this.sync();
+        }
+    }
+
+    protected boolean shouldBeEnabled() {
         boolean enabled = false;
         for (AbilitySource abilitySource : this.abilitySources) {
             if (PlayerAbilityEnableCallback.EVENT.invoker().allow(this.player, this.ability, abilitySource)) {
@@ -83,10 +90,7 @@ public class SimpleAbilityTracker implements AbilityTracker {
                 break;
             }
         }
-        this.updateState(enabled);
-        if (syncVanilla || !(this instanceof VanillaAbilityTracker)) {
-            this.sync();
-        }
+        return enabled;
     }
 
     @Override
@@ -101,7 +105,7 @@ public class SimpleAbilityTracker implements AbilityTracker {
     @Override
     public void load(CompoundTag tag) {
         for (Tag id : tag.getList("ability_sources", NbtType.STRING)) {
-            this.grant(Pal.getAbilitySource(new Identifier(id.asString())));
+            this.addSource(Pal.getAbilitySource(new Identifier(id.asString())));
         }
     }
 

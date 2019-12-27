@@ -17,32 +17,31 @@
  */
 package io.github.ladysnake.pal.impl.mixin;
 
+import io.github.ladysnake.pal.AbilityTracker;
+import io.github.ladysnake.pal.PlayerAbility;
+import io.github.ladysnake.pal.VanillaAbilities;
 import io.github.ladysnake.pal.impl.PlayerAbilityView;
+import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
-import net.minecraft.world.GameMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
-
-@Mixin(ServerPlayerInteractionManager.class)
-public abstract class ServerPlayerInteractionManagerMixin {
-
+@Mixin(ServerPlayerEntity.class)
+public abstract class ServerPlayerEntityMixin implements PlayerAbilityView {
     @Shadow
-    public ServerPlayerEntity player;
+    public abstract void sendAbilitiesUpdate();
 
-    @Inject(
-            method = "setGameMode",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/GameMode;setAbilitites(Lnet/minecraft/entity/player/PlayerAbilities;)V",
-                    shift = AFTER
-            ))
-    private void keepAbilities(GameMode newMode, CallbackInfo info) {
-        PlayerAbilityView.of(this.player).refreshAllPalAbilities(false);
+    @Inject(method = "sendAbilitiesUpdate", at = @At("HEAD"))
+    private void checkAbilityConsistency(CallbackInfo ci) {
+        for (PlayerAbility ability : this.listPalAbilities()) {
+            AbilityTracker tracker = this.get(ability);
+            if (tracker instanceof VanillaAbilityTracker && ability != VanillaAbilities.FLYING) { // flying is volatile anyway
+                ((VanillaAbilityTracker) tracker).checkConflict();
+            }
+        }
     }
+
 }

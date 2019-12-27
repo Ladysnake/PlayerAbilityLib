@@ -17,6 +17,7 @@
  */
 package io.github.ladysnake.pal.impl;
 
+import com.google.common.base.Preconditions;
 import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.AbilityTracker;
 import io.github.ladysnake.pal.PlayerAbility;
@@ -25,12 +26,16 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public final class PalInternals {
+
+    public static final Logger LOGGER = LogManager.getLogger("PlayerAbilityLib");
 
     private static final Map<Identifier, PlayerAbility> abilities = new HashMap<>();
     private static final Map<Identifier, AbilitySource> sources = new HashMap<>();
@@ -42,20 +47,25 @@ public final class PalInternals {
     }
 
     public static PlayerAbility getAbility(Identifier id) {
+        Preconditions.checkNotNull(id);
         return abilities.get(id);
     }
 
     public static PlayerAbility registerAbility(PlayerAbility ability) {
+        if (abilities.containsKey(ability.getId())) {
+            throw new IllegalStateException("An ability was already registered with the id " + ability);
+        }
         abilities.put(ability.getId(), ability);
         return ability;
     }
 
     public static AbilitySource registerSource(Identifier sourceId, Function<Identifier, AbilitySource> factory) {
+        Preconditions.checkNotNull(sourceId);
         return sources.computeIfAbsent(sourceId, factory);
     }
 
-    public static boolean isAbilityRegistered(PlayerAbility ability) {
-        return abilities.containsKey(ability.getId());
+    public static boolean isAbilityRegistered(Identifier abilityId) {
+        return abilityId != null && abilities.containsKey(abilityId);
     }
 
     public static Event<PlayerAbilityUpdatedCallback> createUpdateEvent() {
