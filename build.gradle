@@ -1,7 +1,10 @@
 import net.fabricmc.loom.task.RemapJarTask
 
+import java.time.Year
+
 plugins {
     id 'fabric-loom' version '0.2.6-SNAPSHOT'
+    id "net.minecrell.licenser" version "0.2.1"
     id 'maven-publish'
 }
 
@@ -101,5 +104,29 @@ publishing {
     // select the repositories you want to publish to
     repositories {
          mavenLocal()
+    }
+}
+
+license {
+    header = rootProject.file("code_quality/${project.license_header}_HEADER.txt")
+
+    // Apply licenses only to main source set
+    sourceSets = [project.sourceSets.main]
+    include "**/*.java"
+
+    newLine = false // Disables the empty line between the header and package name
+    //ignoreFailures = true //Ignore failures and only print a warning on license violations
+
+    //export variables
+    ext {
+        year = Year.now()
+        projectDisplayName = project.name
+        projectOwners = rootProject.owners
+        if (project.license_header.contains('GPL')) {
+            if (!project.hasProperty("gpl_version")) {
+                throw new RuntimeException("GPL version needs to be specified through the 'gpl_version' property")
+            }
+            gplVersion = project.gpl_version
+        }
     }
 }
