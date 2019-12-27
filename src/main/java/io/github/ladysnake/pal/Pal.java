@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
  *
  * <p> Use example for a standard flight suit:
  * <pre><code>
- *  public static final AbilitySource SUIT_FLIGHT = new AbilitySource("flightsuit", "suit_flight");
+ *  public static final AbilitySource SUIT_FLIGHT = Pal.getAbilitySource("flightsuit", "suit_flight");
  *
  *  public void onEquip(PlayerEntity player) {
  *      if (!player.world.isClient) {
