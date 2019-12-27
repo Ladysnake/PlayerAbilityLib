@@ -25,6 +25,21 @@ import net.minecraft.util.Identifier;
 
 import java.util.function.BiFunction;
 
+/**
+ * An ability that may be granted to a player.
+ *
+ * <p> Abilities are at their core flags that can be enabled
+ * on specific players. They represent traits that can expand or limit
+ * the possible actions for those players. An ability can be granted to
+ * a player by one or more {@link AbilitySource}.
+ *
+ * <p> Instances of this class can be obtained through the methods
+ * {@link Pal#registerAbility(String, String, BiFunction)} or {@link Pal#registerAbility(Identifier, BiFunction)}.
+ * Instances obtained that way are safe to compare by identity.
+ *
+ * @see VanillaAbilities
+ * @see AbilityTracker
+ */
 public final class PlayerAbility {
     final Event<PlayerAbilityUpdatedCallback> updateEvent = PalInternals.createUpdateEvent();
     private final BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> trackerFactory;
@@ -39,10 +54,19 @@ public final class PlayerAbility {
         this.trackerFactory = trackerFactory;
     }
 
+    /**
+     * Returns the tracker for this ability on the given player.
+     *
+     * @param player the player to get an {@code AbilityTracker} from
+     * @return the tracker for this ability on the given player.
+     */
     public AbilityTracker getTracker(PlayerEntity player) {
         return PlayerAbilityView.of(player).get(this);
     }
 
+    /**
+     * Returns {@code true} if this ability is currently enabled for the given {@code player}.
+     */
     public boolean isEnabledFor(PlayerEntity player) {
         return this.getTracker(player).isEnabled();
     }
