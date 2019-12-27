@@ -1,14 +1,14 @@
 package io.github.ladysnake.pal;
 
 import io.github.ladysnake.pal.impl.PlayerAbilityView;
-import io.github.ladysnake.pal.impl.TypedIdentifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
-public final class AbilitySource extends TypedIdentifier {
+public final class AbilitySource {
+    private final Identifier id;
 
     AbilitySource(Identifier id) {
-        super(id);
+        this.id = id;
     }
 
     public void grantTo(PlayerEntity player, PlayerAbility ability) {
@@ -25,6 +25,11 @@ public final class AbilitySource extends TypedIdentifier {
 
     public Identifier getId() {
         return this.id;
+    }
+
+    @Override
+    public String toString() {
+        return "AbilitySource[" + this.id + "]";
     }
 
 }

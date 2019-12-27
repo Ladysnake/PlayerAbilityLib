@@ -1,5 +1,6 @@
 package io.github.ladysnake.pal.impl;
 
+import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.AbilityTracker;
 import io.github.ladysnake.pal.PlayerAbility;
 import io.github.ladysnake.pal.PlayerAbilityUpdatedCallback;
@@ -10,10 +11,12 @@ import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public final class PalInternals {
 
     private static final Map<Identifier, PlayerAbility> abilities = new HashMap<>();
+    private static final Map<Identifier, AbilitySource> sources = new HashMap<>();
 
     public static void populate(PlayerEntity player, Map<PlayerAbility, AbilityTracker> map) {
         for (PlayerAbility ability : abilities.values()) {
@@ -28,6 +31,10 @@ public final class PalInternals {
     public static PlayerAbility registerAbility(PlayerAbility ability) {
         abilities.put(ability.getId(), ability);
         return ability;
+    }
+
+    public static AbilitySource registerSource(Identifier sourceId, Function<Identifier, AbilitySource> factory) {
+        return sources.computeIfAbsent(sourceId, factory);
     }
 
     public static boolean isAbilityRegistered(PlayerAbility ability) {

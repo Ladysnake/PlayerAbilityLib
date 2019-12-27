@@ -56,16 +56,16 @@ public final class Pal implements ModInitializer {
      * Registers a player ability that mods can interact with.
      *
      * <p> A registered {@link AbilityTracker} will be accessible using {@link PlayerAbility#getTracker(PlayerEntity)}
-     * with the given {@code ability}. Said ability instance is attached to every player at construction time using
+     * with the given {@code abilityId}. Said ability instance is attached to every player at construction time using
      * the given {@code factory}.
      *
-     * @param ability a unique identifier for the ability
+     * @param abilityId a unique identifier for the ability
      * @param factory   a factory to create {@code ToggleableAbility} instances for every player
      * @apiNote abilities must be registered during initialization.
      * @see SimpleAbilityTracker
      */
-    public static PlayerAbility registerAbility(Identifier ability, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> factory) {
-        return PalInternals.registerAbility(new PlayerAbility(ability, factory));
+    public static PlayerAbility registerAbility(Identifier abilityId, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> factory) {
+        return PalInternals.registerAbility(new PlayerAbility(abilityId, factory));
     }
 
     public static AbilitySource getAbilitySource(String namespace, String path) {
@@ -73,7 +73,7 @@ public final class Pal implements ModInitializer {
     }
 
     public static AbilitySource getAbilitySource(Identifier abilitySourceId) {
-        return new AbilitySource(abilitySourceId);
+        return PalInternals.registerSource(abilitySourceId, AbilitySource::new);
     }
 
     /**
