@@ -17,7 +17,7 @@
  */
 package io.github.ladysnake.pal.impl.mixin;
 
-import io.github.ladysnake.pal.Pal;
+import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.world.GameMode;
@@ -43,6 +43,6 @@ public abstract class ServerPlayerInteractionManagerMixin {
                     shift = AFTER
             ))
     private void keepSoulAbilities(GameMode newMode, CallbackInfo info) {
-        Pal.getAbilities(this.player).refreshAll(false);
+        PlayerAbilityView.of(this.player).refreshAll(false);
     }
 }

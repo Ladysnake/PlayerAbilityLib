@@ -1,22 +1,22 @@
 package io.github.ladysnake.pal.impl;
 
-import io.github.ladysnake.pal.SimpleToggleableAbility;
+import io.github.ladysnake.pal.PlayerAbility;
+import io.github.ladysnake.pal.SimpleAbilityTracker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public final class VanillaToggleableAbility extends SimpleToggleableAbility {
+public final class VanillaAbilityTracker extends SimpleAbilityTracker {
     private final AbilitySetter setter;
     private final Predicate<PlayerAbilities> getter;
 
-    public VanillaToggleableAbility(Identifier abilityId, PlayerEntity player, AbilitySetter setter, Predicate<PlayerAbilities> getter) {
+    public VanillaAbilityTracker(PlayerAbility abilityId, PlayerEntity player, AbilitySetter setter, Predicate<PlayerAbilities> getter) {
         super(abilityId, player);
         this.setter = setter;
         this.getter = getter;

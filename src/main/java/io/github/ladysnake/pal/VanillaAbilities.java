@@ -1,24 +1,25 @@
 package io.github.ladysnake.pal;
 
+import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.GameMode;
 
 /**
  * Ability identifiers for vanilla {@link PlayerAbilities}
- *
- * @see PlayerAbilityView
  */
 public final class VanillaAbilities {
     /**
      * If enabled, players become invulnerable* to all damage, like in creative and spectator mode.
      *
-     * <p> Note: Damage sources that {@link DamageSource#isOutOfWorld() bypass invulnerability}
+     * <p> Note", " Damage sources that {@link DamageSource#isOutOfWorld() bypass invulnerability}
      * can still damage players with this ability enabled.
      *
      * @see PlayerAbilities#invulnerable
      */
-    public static final Identifier INVULNERABLE = new Identifier("minecraft:invulnerable");
+    public static final PlayerAbility INVULNERABLE = Pal.registerAbility("minecraft", "invulnerable",
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.invulnerable = e || !g.isSurvivalLike(), a -> a.invulnerable));
+
     /**
      * If enabled and {@link #ALLOW_FLYING} is enabled, players become able to move in any direction in the air,
      * like in creative and spectator mode.
@@ -30,7 +31,9 @@ public final class VanillaAbilities {
      *
      * @see PlayerAbilities#flying
      */
-    public static final Identifier FLYING = new Identifier("minecraft:flying");
+    public static final PlayerAbility FLYING = Pal.registerAbility("minecraft", "flying",
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.flying = e || g == GameMode.SPECTATOR, a -> a.flying));
+
     /**
      * If enabled, players become able to double tap space to fly, like in creative mode.
      *
@@ -39,13 +42,20 @@ public final class VanillaAbilities {
      *
      * @see PlayerAbilities#allowFlying
      */
-    public static final Identifier ALLOW_FLYING = new Identifier("minecraft:mayfly");
+    public static final PlayerAbility ALLOW_FLYING = Pal.registerAbility("minecraft", "mayfly",
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> {
+            a.allowFlying = e || !g.isSurvivalLike();
+            a.flying &= a.allowFlying;
+        }, a -> a.allowFlying));
+
     /**
      * If enabled, players stop consuming items and experience, and start dealing creative damage.
      *
      * @see PlayerAbilities#creativeMode
      */
-    public static final Identifier CREATIVE_MODE = new Identifier("minecraft:instabuild");
+    public static final PlayerAbility CREATIVE_MODE = Pal.registerAbility("minecraft", "instabuild",
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.creativeMode = e || g.isCreative(), a -> a.creativeMode));
+
     /**
      * If enabled, players will be denied world modifications as if they were in adventure or spectator mode.
      *
@@ -54,8 +64,8 @@ public final class VanillaAbilities {
      *
      * @see PlayerAbilities#allowModifyWorld
      */
-    public static final Identifier LIMIT_WORLD_MODIFICATIONS = new Identifier("minecraft:maynotbuild");
+    public static final PlayerAbility LIMIT_WORLD_MODIFICATIONS = Pal.registerAbility("minecraft", "maynotbuild",
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.allowModifyWorld = !e && !g.shouldLimitWorldModification(), a -> !a.allowModifyWorld));
 
-    private VanillaAbilities() {
-    }
+    VanillaAbilities() { }
 }

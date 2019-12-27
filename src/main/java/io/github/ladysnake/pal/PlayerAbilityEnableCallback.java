@@ -3,7 +3,6 @@ package io.github.ladysnake.pal;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
 
 @FunctionalInterface
 public interface PlayerAbilityEnableCallback {
@@ -18,5 +17,5 @@ public interface PlayerAbilityEnableCallback {
             return true;
         });
 
-    boolean allow(PlayerEntity player, Identifier abilityId, Identifier abilitySource);
+    boolean allow(PlayerEntity player, PlayerAbility abilityId, AbilitySource abilitySource);
 }

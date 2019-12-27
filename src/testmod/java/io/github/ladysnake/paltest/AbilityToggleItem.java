@@ -1,7 +1,8 @@
 package io.github.ladysnake.paltest;
 
+import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
-import io.github.ladysnake.pal.ToggleableAbility;
+import io.github.ladysnake.pal.PlayerAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,32 +13,31 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-class AbilityToggleItem extends Item {
-    private Identifier abilityId;
-    private Identifier abilitySource;
+public class AbilityToggleItem extends Item {
+    private PlayerAbility ability;
+    private AbilitySource abilitySource;
 
-    public AbilityToggleItem(Settings settings, Identifier abilityId, Identifier abilitySource) {
+    public AbilityToggleItem(Settings settings, PlayerAbility abilityId, Identifier abilitySourceId) {
         super(settings);
-        this.abilityId = abilityId;
-        this.abilitySource = abilitySource;
+        this.ability = abilityId;
+        this.abilitySource = Pal.getAbilitySource(abilitySourceId);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ToggleableAbility ability = Pal.getAbilities(user).get(abilityId);
         if (!world.isClient) {
-            if (ability.isProvidedBy(abilitySource)) {
-                ability.remove(abilitySource);
+            if (abilitySource.grants(user, this.ability)) {
+                abilitySource.revokeFrom(user, this.ability);
             } else {
-                ability.add(abilitySource);
+                abilitySource.grantTo(user, this.ability);
             }
             user.addChatMessage(new LiteralText("")
                     .append(new LiteralText(abilitySource.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
-                    .append(ability.isProvidedBy(abilitySource) ? new LiteralText(" added").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.setColor(Formatting.RED)))
+                    .append(abilitySource.grants(user, this.ability) ? new LiteralText(" added").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.setColor(Formatting.RED)))
                     .append(" (")
-                    .append(new LiteralText(abilityId.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
+                    .append(new LiteralText(this.ability.toString()).styled(s -> s.setColor(Formatting.YELLOW)))
                     .append(" is ")
-                    .append(ability.isEnabled() ? new LiteralText("enabled").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText("disabled").styled(s -> s.setColor(Formatting.RED)))
+                    .append(ability.isEnabledFor(user) ? new LiteralText("enabled").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText("disabled").styled(s -> s.setColor(Formatting.RED)))
                     .append(")"), false);
         }
         return TypedActionResult.success(user.getStackInHand(hand));
