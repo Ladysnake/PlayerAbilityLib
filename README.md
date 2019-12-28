@@ -37,9 +37,9 @@ public static final AbilitySource CHARM_FLIGHT = Pal.getAbilitySource("mymod", "
 public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
     if (!world.isClient) {
         if (CHARM_FLIGHT.grants(user, VanillaAbilities.ALLOW_FLYING)) { // check whether the source is granting the ability
-            abilitySource.revokeFrom(user, VanillaAbilities.ALLOW_FLYING); // if it is, revoke it
+            CHARM_FLIGHT.revokeFrom(user, VanillaAbilities.ALLOW_FLYING); // if it is, revoke it
        } else {
-            abilitySource.grantTo(user, VanillaAbilities.ALLOW_FLYING);  // otherwise, grant it
+            CHARM_FLIGHT.grantTo(user, VanillaAbilities.ALLOW_FLYING);  // otherwise, grant it
         }
     }
     return TypedActionResult.success(user.getStackInHand(hand));
