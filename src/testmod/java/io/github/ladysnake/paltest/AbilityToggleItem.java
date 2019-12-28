@@ -13,6 +13,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+/**
+ * An item that toggles an arbitrary ability using PAL
+ */
 public class AbilityToggleItem extends Item {
     private PlayerAbility ability;
     private AbilitySource abilitySource;
@@ -26,11 +29,12 @@ public class AbilityToggleItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
-            if (abilitySource.grants(user, this.ability)) {
-                abilitySource.revokeFrom(user, this.ability);
+            if (abilitySource.grants(user, this.ability)) { // check whether the source is granting the ability
+                abilitySource.revokeFrom(user, this.ability); // if it is, revoke it
             } else {
-                abilitySource.grantTo(user, this.ability);
+                abilitySource.grantTo(user, this.ability);  // otherwise, grant it
             }
+            // Feedback message
             user.addChatMessage(new LiteralText("")
                     .append(new LiteralText(abilitySource.getId().toString()).styled(s -> s.setColor(Formatting.YELLOW)))
                     .append(abilitySource.grants(user, this.ability) ? new LiteralText(" added").styled(s -> s.setColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.setColor(Formatting.RED)))
