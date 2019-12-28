@@ -42,6 +42,7 @@ public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand han
             abilitySource.grantTo(user, VanillaAbilities.ALLOW_FLYING);  // otherwise, grant it
         }
     }
+    return TypedActionResult.success(user.getStackInHand(hand));
 }
 ```
 
