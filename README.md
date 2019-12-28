@@ -1,4 +1,7 @@
 # PlayerAbilityLib
+
+[![](https://jitpack.io/v/Ladysnake/PlayerAbilityLib.svg)](https://jitpack.io/#Ladysnake/PlayerAbilityLib)
+
 A lightweight library to provide compatibility between mods that make use of player abilities.
 
 ## Adding PAL to your project
