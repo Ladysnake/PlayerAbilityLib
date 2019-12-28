@@ -5,6 +5,7 @@ import java.time.Year
 plugins {
     id 'fabric-loom' version '0.2.6-SNAPSHOT'
     id "net.minecrell.licenser" version "0.2.1"
+    id "com.jfrog.bintray" version '1.8.4'
     id 'java-library'
     id 'maven-publish'
 }
@@ -84,6 +85,25 @@ task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
 }
 
 build.dependsOn(remapTestmodJar)
+
+bintray {
+    user = project.findProperty('bintray_user')
+    key = project.findProperty('bintray_api_key')
+    publications = ['mavenJava']
+    publish = true //[Default: false] Whether version should be auto published after an upload
+    pkg {
+        repo = 'libs'
+        name = project.name
+        userOrg = 'ladysnake'
+        version {
+            name = project.version
+            vcsTag = project.version
+            released  = new Date()
+        }
+    }
+}
+
+bintrayUpload.dependsOn build
 
 // configure the maven publication
 publishing {
