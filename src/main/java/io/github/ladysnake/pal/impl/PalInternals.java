@@ -51,7 +51,7 @@ public final class PalInternals {
         return abilities.get(id);
     }
 
-    public static PlayerAbility registerAbility(PlayerAbility ability) {
+    public static synchronized PlayerAbility registerAbility(PlayerAbility ability) {
         if (abilities.containsKey(ability.getId())) {
             throw new IllegalStateException("An ability was already registered with the id " + ability);
         }
@@ -61,7 +61,14 @@ public final class PalInternals {
 
     public static AbilitySource registerSource(Identifier sourceId, Function<Identifier, AbilitySource> factory) {
         Preconditions.checkNotNull(sourceId);
-        return sources.computeIfAbsent(sourceId, factory);
+        AbilitySource value = sources.get(sourceId);
+        if (value == null) {
+            synchronized (sources) {
+                return sources.computeIfAbsent(sourceId, factory); // off-chance that someone modifies the map concurrently
+            }
+        }
+
+        return value;
     }
 
     public static boolean isAbilityRegistered(Identifier abilityId) {
