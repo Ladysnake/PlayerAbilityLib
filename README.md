@@ -4,6 +4,8 @@
 
 A lightweight library to provide compatibility between mods that make use of player abilities.
 
+*credits to Chloe Dawn for some of the API design*
+
 ## Adding PAL to your project
 
 You can add the library by inserting the following in your `build.gradle` :
