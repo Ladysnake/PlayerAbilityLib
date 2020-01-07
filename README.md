@@ -36,15 +36,15 @@ You can find a couple examples in the [Test Mod](https://github.com/Ladysnake/Pl
 
 [Item that toggles an ability](https://github.com/Ladysnake/PlayerAbilityLib/blob/master/src/testmod/java/io/github/ladysnake/paltest/AbilityToggleItem.java) :
 ```java
-public static final AbilitySource CHARM_FLIGHT = Pal.getAbilitySource("mymod", "charm_flight"));  // works like an identifier
-    
+public static final AbilitySource FLIGHT_CHARM = Pal.getAbilitySource("mymod", "flight_charm");  // works like an identifier
+
 @Override
 public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
     if (!world.isClient) {
-        if (CHARM_FLIGHT.grants(user, VanillaAbilities.ALLOW_FLYING)) { // check whether the source is granting the ability
-            CHARM_FLIGHT.revokeFrom(user, VanillaAbilities.ALLOW_FLYING); // if it is, revoke it
+        if (FLIGHT_CHARM.grants(user, VanillaAbilities.ALLOW_FLYING)) { // check whether the source is granting the ability
+            FLIGHT_CHARM.revokeFrom(user, VanillaAbilities.ALLOW_FLYING); // if it is, revoke it
        } else {
-            CHARM_FLIGHT.grantTo(user, VanillaAbilities.ALLOW_FLYING);  // otherwise, grant it
+            FLIGHT_CHARM.grantTo(user, VanillaAbilities.ALLOW_FLYING);  // otherwise, grant it
         }
     }
     return TypedActionResult.success(user.getStackInHand(hand));
@@ -53,19 +53,21 @@ public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand han
 
 [Potion that grants an ability](https://github.com/Ladysnake/PlayerAbilityLib/blob/master/src/testmod/java/io/github/ladysnake/paltest/FlightEffect.java) :
 ```java
-public static final AbilitySource POTION_FLIGHT = Pal.getAbilitySource("mymod", "potion_flight");
+public static final AbilitySource FLIGHT_POTION = Pal.getAbilitySource("mymod", "flight_potion");
 
 @Override
 public void onApplied(LivingEntity effected, AbstractEntityAttributeContainer abstractEntityAttributeContainer, int amplifier) {
     if (effected instanceof PlayerEntity) {
-        POTION_FLIGHT.grantTo((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
+        Pal.grantAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
+        // equivalent to: FLIGHT_POTION.grantTo((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
     }
 }
 
 @Override
 public void onRemoved(LivingEntity effected, AbstractEntityAttributeContainer abstractEntityAttributeContainer, int amplifier) {
     if (effected instanceof PlayerEntity) {
-        POTION_FLIGHT.revokeFrom((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
+        Pal.revokeAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
+        // equivalent to: FLIGHT_POTION.revokeFrom((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
     }
 }
 ```

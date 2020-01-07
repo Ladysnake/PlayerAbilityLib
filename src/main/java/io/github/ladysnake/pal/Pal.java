@@ -56,6 +56,43 @@ import java.util.function.BiFunction;
 public final class Pal implements ModInitializer {
 
     /**
+     * Grants an ability to a player.
+     *
+     * <p> If no {@link PlayerAbilityEnableCallback} disallows the ability's activation,
+     * {@code ability.isEnabled()} will return {@code true} after calling this method.
+     *
+     * <p> This method behaves as if:
+     * {@code reason.grantTo(player, ability)}
+     *
+     * @param player  the player on which to enable the ability
+     * @param ability the ability to enable
+     * @param reason the reason for which the player should get the ability
+     * @since 1.0.1
+     */
+    public static void grantAbility(PlayerEntity player, PlayerAbility ability, AbilitySource reason) {
+        reason.grantTo(player, ability);
+    }
+
+    /**
+     * Revokes an ability from a player.
+     *
+     * <p> If no other ability source currently exist for the ability, and no builtin
+     * provider forces the ability activation, {@code ability.isEnabled()} will return
+     * {@code false} after calling this method.
+     *
+     * <p> This method behaves as if:
+     * {@code reason.revokeFrom(player, ability)}
+     *
+     * @param player  the player to revoke the ability from
+     * @param ability the ability to revoke
+     * @param reason the reason for which the player had the ability
+     * @since 1.0.1
+     */
+    public static void revokeAbility(PlayerEntity player, PlayerAbility ability, AbilitySource reason) {
+        reason.revokeFrom(player, ability);
+    }
+
+    /**
      * Convenience overload for {@link #getAbilitySource(Identifier)} that creates an {@link Identifier}
      * from the given {@code namespace} and {@code path}.
      *

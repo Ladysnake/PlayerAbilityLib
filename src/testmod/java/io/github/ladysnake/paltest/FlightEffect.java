@@ -13,7 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
  * A status effect that gives creative flight to players
  */
 public class FlightEffect extends StatusEffect {
-    public static final AbilitySource POTION_FLIGHT = Pal.getAbilitySource(PalTest.id("potion_flight"));
+    public static final AbilitySource FLIGHT_POTION = Pal.getAbilitySource(PalTest.id("potion_flight"));
 
     public FlightEffect(StatusEffectType statusEffectType, int color) {
         super(statusEffectType, color);
@@ -23,7 +23,7 @@ public class FlightEffect extends StatusEffect {
     public void onApplied(LivingEntity effected, AbstractEntityAttributeContainer abstractEntityAttributeContainer, int amplifier) {
         super.onApplied(effected, abstractEntityAttributeContainer, amplifier);
         if (effected instanceof PlayerEntity) {
-            POTION_FLIGHT.grantTo((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
+            Pal.grantAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         }
     }
 
@@ -31,7 +31,7 @@ public class FlightEffect extends StatusEffect {
     public void onRemoved(LivingEntity effected, AbstractEntityAttributeContainer abstractEntityAttributeContainer, int amplifier) {
         super.onRemoved(effected, abstractEntityAttributeContainer, amplifier);
         if (effected instanceof PlayerEntity) {
-            POTION_FLIGHT.revokeFrom((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
+            Pal.revokeAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         }
     }
 }
