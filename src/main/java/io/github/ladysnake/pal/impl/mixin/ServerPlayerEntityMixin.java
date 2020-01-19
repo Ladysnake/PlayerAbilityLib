@@ -34,7 +34,7 @@ public abstract class ServerPlayerEntityMixin implements PlayerAbilityView {
     @Shadow
     public abstract void sendAbilitiesUpdate();
 
-    @Inject(method = "sendAbilitiesUpdate", at = @At("HEAD"))
+    @Inject(method = "sendAbilitiesUpdate", at = @At(value = "NEW", target = "net/minecraft/client/network/packet/PlayerAbilitiesS2CPacket"))
     private void checkAbilityConsistency(CallbackInfo ci) {
         for (PlayerAbility ability : this.listPalAbilities()) {
             AbilityTracker tracker = this.get(ability);
