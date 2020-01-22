@@ -27,7 +27,7 @@ task checkGitStatus() {
 }
 
 githubRelease {
-    token "${github_releases_token}"
+    token "${findProperty('github_releases_token')}"
     // default owner: last component of maven group
     // default repo: name of the project
     tagName = project.version
