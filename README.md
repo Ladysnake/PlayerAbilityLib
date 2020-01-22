@@ -1,6 +1,6 @@
 # PlayerAbilityLib
 
-[![](https://jitpack.io/v/Ladysnake/PlayerAbilityLib.svg)](https://jitpack.io/#Ladysnake/PlayerAbilityLib)
+[![Curseforge](https://curse.nikky.moe/api/img/265729?logo)](https://www.curseforge.com/projects/359522) [![](https://jitpack.io/v/Ladysnake/PlayerAbilityLib.svg)](https://jitpack.io/#Ladysnake/PlayerAbilityLib)
 
 A lightweight library to provide compatibility between mods that make use of player abilities.
 
