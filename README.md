@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    modImplementation "io.github.ladysnake:PlayerAbilityLib:${pal_version}"
-    include "io.github.ladysnake:PlayerAbilityLib:${pal_version}"
+    modImplementation "io.github.ladysnake:PlayerAbilityLib:${project.pal_version}"
+    include "io.github.ladysnake:PlayerAbilityLib:${project.pal_version}"
 }
 ```
 
