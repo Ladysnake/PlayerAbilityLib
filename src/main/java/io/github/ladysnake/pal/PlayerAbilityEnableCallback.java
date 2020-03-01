@@ -21,9 +21,13 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
 
+/**
+ * Callback interface for receiving ability enabling events.
+ *
+ * @see PlayerAbilityUpdatedCallback
+ */
 @FunctionalInterface
 public interface PlayerAbilityEnableCallback {
-
     Event<PlayerAbilityEnableCallback> EVENT = EventFactory.createArrayBacked(PlayerAbilityEnableCallback.class,
         (listeners) -> (player, abilityId, abilitySource) -> {
             for (PlayerAbilityEnableCallback listener : listeners) {
@@ -34,5 +38,19 @@ public interface PlayerAbilityEnableCallback {
             return true;
         });
 
-    boolean allow(PlayerEntity player, PlayerAbility abilityId, AbilitySource abilitySource);
+    /**
+     * Called when an {@code AbilitySource} attempts to enable a {@code PlayerAbility} on a player.
+     *
+     * <p> The callback may return {@code false} to reject the activation,
+     * keeping the ability in its previous activation state.
+     * Some abilities may stay {@linkplain PlayerAbility#isEnabledFor(PlayerEntity) enabled}
+     * despite all sources of activation being rejected, because of intrinsic providers like the player's gamemode.
+     *
+     * @param player        the affected player
+     * @param ability       the ability being enabled
+     * @param abilitySource the source of the ability
+     * @return {@code true} to let {@code abilitySource} enable the ability on {@code player},
+     * and {@code false} to prevent the ability from being enabled.
+     */
+    boolean allow(PlayerEntity player, PlayerAbility ability, AbilitySource abilitySource);
 }

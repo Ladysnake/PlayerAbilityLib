@@ -82,15 +82,21 @@ public class SimpleAbilityTracker implements AbilityTracker {
         }
     }
 
+    /**
+     * Returns {@code true} if this tracker's ability should be enabled.
+     *
+     * <p> This is independent of the actual value returned by {@link #isEnabled()}
+     * and may be used to update the latter.
+     *
+     * @return {@code true} if the tracked ability should currently be enabled
+     */
     protected boolean shouldBeEnabled() {
-        boolean enabled = false;
         for (AbilitySource abilitySource : this.abilitySources) {
             if (PlayerAbilityEnableCallback.EVENT.invoker().allow(this.player, this.ability, abilitySource)) {
-                enabled = true;
-                break;
+                return true;
             }
         }
-        return enabled;
+        return false;
     }
 
     @Override

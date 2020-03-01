@@ -29,7 +29,7 @@ public final class VanillaAbilities {
     /**
      * If enabled, players become invulnerable* to all damage, like in creative and spectator mode.
      *
-     * <p> Note", " Damage sources that {@link DamageSource#isOutOfWorld() bypass invulnerability}
+     * <p> Note: Damage sources that {@link DamageSource#isOutOfWorld() bypass invulnerability}
      * can still damage players with this ability enabled.
      *
      * @see PlayerAbilities#invulnerable

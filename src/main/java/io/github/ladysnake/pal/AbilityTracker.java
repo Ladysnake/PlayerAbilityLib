@@ -18,9 +18,13 @@
 package io.github.ladysnake.pal;
 
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.Contract;
 
 /**
  * A tracker for a player ability that can be turned on or off.
+ *
+ * @apiNote this interface is intended to be implemented by API consumers that
+ * provide new {@linkplain PlayerAbility abilities}.
  */
 public interface AbilityTracker {
 
@@ -32,6 +36,7 @@ public interface AbilityTracker {
      *
      * @param abilitySource the source granting the ability
      */
+    @Contract(mutates = "this")
     void addSource(AbilitySource abilitySource);
 
     /**
@@ -42,6 +47,7 @@ public interface AbilityTracker {
      *
      * @param abilitySource the source granting the ability
      */
+    @Contract(mutates = "this")
     void removeSource(AbilitySource abilitySource);
 
     /**
@@ -50,6 +56,7 @@ public interface AbilityTracker {
      * @param abilitySource the source granting the ability
      * @return {@code true} if this tracker's ability is provided by {@code abilitySource}
      */
+    @Contract(pure = true)
     boolean isGrantedBy(AbilitySource abilitySource);
 
     /**
@@ -60,6 +67,7 @@ public interface AbilityTracker {
      *
      * @return {@code true} if this ability is enabled
      */
+    @Contract(pure = true)
     boolean isEnabled();
 
     /**
@@ -78,6 +86,7 @@ public interface AbilityTracker {
      *
      * @param tag the tag to write to
      */
+    @Contract(mutates = "param")
     void save(CompoundTag tag);
 
     /**
@@ -85,5 +94,6 @@ public interface AbilityTracker {
      *
      * @param tag the tag to read from
      */
+    @Contract(mutates = "this")
     void load(CompoundTag tag);
 }

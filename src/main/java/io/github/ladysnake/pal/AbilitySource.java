@@ -80,13 +80,21 @@ public final class AbilitySource {
         return ability.getTracker(player).isGrantedBy(this);
     }
 
+    /**
+     * Returns the identifier used to create this {@code AbilitySource}.
+     *
+     * <p> The returned identifier is unique and can be passed to {@link Pal#getAbilitySource(Identifier)}
+     * to retrieve this instance.
+     *
+     * @return the identifier wrapped by this {@code AbilitySource}
+     */
     public Identifier getId() {
         return this.id;
     }
 
     @Override
     public String toString() {
-        return "AbilitySource[" + this.id + "]";
+        return "AbilitySource@" + this.id;
     }
 
 }

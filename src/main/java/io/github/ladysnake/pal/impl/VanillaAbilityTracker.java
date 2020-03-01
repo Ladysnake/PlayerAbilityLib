@@ -25,6 +25,7 @@ import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
+import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -83,6 +84,7 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
 
     @FunctionalInterface
     public interface AbilitySetter {
+        @Contract(mutates = "param2")
         void set(GameMode g, PlayerAbilities abilities, boolean enabled);
     }
 }

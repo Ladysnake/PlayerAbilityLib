@@ -22,6 +22,8 @@ import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.util.function.BiFunction;
 
@@ -41,6 +43,7 @@ import java.util.function.BiFunction;
  * @see AbilityTracker
  */
 public final class PlayerAbility {
+    @ApiStatus.Internal
     final Event<PlayerAbilityUpdatedCallback> updateEvent = PalInternals.createUpdateEvent();
     private final BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> trackerFactory;
     private final Identifier id;
@@ -49,6 +52,7 @@ public final class PlayerAbility {
      * @see Pal#registerAbility(String, String, BiFunction)
      * @see Pal#registerAbility(Identifier, BiFunction)
      */
+    @ApiStatus.Internal
     PlayerAbility(Identifier id, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> trackerFactory) {
         this.id = id;
         this.trackerFactory = trackerFactory;
@@ -71,16 +75,35 @@ public final class PlayerAbility {
         return this.getTracker(player).isEnabled();
     }
 
+    /**
+     * Creates an {@code AbilityTracker} that can be attached to {@code player}.
+     *
+     * <p> This method is called for every registered {@code PlayerAbility}
+     * when a new player is instantiated. It is not intended to be called from consumer code.
+     *
+     * @param player the player to create a tracker for.
+     * @return a new {@code AbilityTracker} for {@code player}.
+     */
+    @Contract("_ -> new")
+    @ApiStatus.Internal
     public AbilityTracker createTracker(PlayerEntity player) {
         return this.trackerFactory.apply(this, player);
     }
 
+    /**
+     * Returns the identifier used to register this {@code PlayerAbility}.
+     *
+     * <p> The returned identifier is unique and can be passed to {@link Pal#provideRegisteredAbility(Identifier)}
+     * to retrieve this instance.
+     *
+     * @return the identifier wrapped by this {@code PlayerAbility}
+     */
     public Identifier getId() {
         return this.id;
     }
 
     @Override
     public String toString() {
-        return "PlayerAbility[" + this.id + "]";
+        return "PlayerAbility@" + this.id;
     }
 }

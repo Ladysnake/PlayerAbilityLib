@@ -12,9 +12,9 @@ You can add the library by inserting the following in your `build.gradle` :
 
 ```gradle
 repositories {
-    maven {
-        name = 'Ladysnake Libs'
-        url = 'https://dl.bintray.com/ladysnake/libs' 
+	maven { 
+        name = "Ladysnake Libs"
+        url = 'https://dl.bintray.com/ladysnake/libs'
     }
 }
 
@@ -36,6 +36,9 @@ You can find the current version of PAL in the [releases](https://github.com/Lad
 ## Using PAL
 
 You can find a couple examples in the [Test Mod](https://github.com/Ladysnake/PlayerAbilityLib/tree/master/src/testmod/java/io/github/ladysnake/paltest).
+
+Note that player abilities can only accessed serverside. If you want to store more complex data, or to synchronize it between server and client,
+you should take a look at [Cardinal Components API](https://github.com/OnyxStudios/Cardinal-Components-API).
 
 [Item that toggles an ability](https://github.com/Ladysnake/PlayerAbilityLib/blob/master/src/testmod/java/io/github/ladysnake/paltest/AbilityToggleItem.java) :
 ```java
