@@ -1,4 +1,10 @@
 ------------------------------------------------------
+Version 1.1.0
+------------------------------------------------------
+- The mod's interfaces can no longer be accessed from a client world
+- Documentation, documentation, more documentation !
+
+------------------------------------------------------
 Version 1.0.2
 ------------------------------------------------------
 Now releasing on curseforge
