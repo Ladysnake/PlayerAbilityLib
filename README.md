@@ -2,9 +2,12 @@
 
 [![Curseforge](https://curse.nikky.moe/api/img/359522?logo)](https://www.curseforge.com/projects/359522) [![](https://jitpack.io/v/Ladysnake/PlayerAbilityLib.svg)](https://jitpack.io/#Ladysnake/PlayerAbilityLib)
 
-A lightweight library to provide compatibility between mods that make use of player abilities.
+A lightweight serverside library to provide compatibility between mods that make use of player abilities.
 
-*credits to Chloe Dawn for some of the API design*
+Conflicts arise often when several mods update the same field in `PlayerAbilities`. This library exists so that
+all modifications can be made from a single place, keeping track of what mod enabled what ability.
+
+*credits to ~~InsomniaPrincess~~ Chloe Dawn for some of the API design*
 
 ## Adding PAL to your project
 
@@ -37,7 +40,10 @@ You can find the current version of PAL in the [releases](https://github.com/Lad
 
 You can find a couple examples in the [Test Mod](https://github.com/Ladysnake/PlayerAbilityLib/tree/master/src/testmod/java/io/github/ladysnake/paltest).
 
-Note that player abilities can only accessed serverside. If you want to store more complex data, or to synchronize it between server and client,
+**Note that PAL interfaces can only be accessed serverside, as no synchronization is done on the ability sources.**  
+Read accesses can still be done directly on the `PlayerAbilities` instance, both serverside and clientside.
+
+If you want to store more complex data, or to synchronize it between server and client,
 you should take a look at [Cardinal Components API](https://github.com/OnyxStudios/Cardinal-Components-API).
 
 [Item that toggles an ability](https://github.com/Ladysnake/PlayerAbilityLib/blob/master/src/testmod/java/io/github/ladysnake/paltest/AbilityToggleItem.java) :
