@@ -82,7 +82,7 @@ public final class VanillaAbilities {
      * @see PlayerAbilities#allowModifyWorld
      */
     public static final PlayerAbility LIMIT_WORLD_MODIFICATIONS = Pal.registerAbility("minecraft", "maynotbuild",
-        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.allowModifyWorld = !e && !g.shouldLimitWorldModification(), a -> !a.allowModifyWorld));
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.allowModifyWorld = (!e && !g.isBlockBreakingRestricted()), a -> !a.allowModifyWorld));
 
     VanillaAbilities() { }
 }

@@ -34,6 +34,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -50,8 +51,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     @Unique
     private final Map<PlayerAbility, AbilityTracker> palAbilities = new LinkedHashMap<>();
 
-    public ServerPlayerEntityMixin(World world, GameProfile profile) {
-        super(world, profile);
+    public ServerPlayerEntityMixin(World world, BlockPos pos, GameProfile profile) {
+        super(world, pos, profile);
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -81,7 +82,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         }
     }
 
-    @Inject(method = "sendAbilitiesUpdate", at = @At(value = "NEW", target = "net/minecraft/client/network/packet/PlayerAbilitiesS2CPacket"))
+    @Inject(method = "sendAbilitiesUpdate", at = @At(value = "NEW", target = "net/minecraft/network/packet/s2c/play/PlayerAbilitiesS2CPacket"))
     private void checkAbilityConsistency(CallbackInfo ci) {
         for (PlayerAbility ability : this.listPalAbilities()) {
             AbilityTracker tracker = this.get(ability);

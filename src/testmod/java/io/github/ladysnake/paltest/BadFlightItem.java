@@ -30,7 +30,7 @@ public class BadFlightItem extends Item {
             user.abilities.allowFlying = !user.abilities.allowFlying;
             user.abilities.flying &= user.abilities.allowFlying;
             user.sendAbilitiesUpdate();
-            user.addChatMessage(new LiteralText("Flight " + (user.abilities.allowFlying ? "enabled" : "disabled")), true);
+            user.sendMessage(new LiteralText("Flight " + (user.abilities.allowFlying ? "enabled" : "disabled")), true);
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }

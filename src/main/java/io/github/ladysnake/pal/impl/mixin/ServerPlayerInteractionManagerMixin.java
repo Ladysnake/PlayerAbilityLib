@@ -42,7 +42,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
                     target = "Lnet/minecraft/world/GameMode;setAbilitites(Lnet/minecraft/entity/player/PlayerAbilities;)V",
                     shift = AFTER
             ))
-    private void keepAbilities(GameMode newMode, CallbackInfo info) {
+    private void keepAbilities(GameMode newMode, GameMode previousMode, CallbackInfo info) {
         PlayerAbilityView.of(this.player).refreshAllPalAbilities(false);
     }
 }
