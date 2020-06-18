@@ -23,6 +23,7 @@ import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.world.GameMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,9 +32,21 @@ import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public abstract class ServerPlayerInteractionManagerMixin {
+    @Unique
+    private static final ThreadLocal<Boolean> PAL_FLYING = new ThreadLocal<>();
 
     @Shadow
     public ServerPlayerEntity player;
+
+    @Inject(
+            method = "setGameMode",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/GameMode;setAbilitites(Lnet/minecraft/entity/player/PlayerAbilities;)V"
+            ))
+    private void saveFlying(GameMode newMode, GameMode previousMode, CallbackInfo info) {
+        PAL_FLYING.set(player.abilities.flying);
+    }
 
     @Inject(
             method = "setGameMode",
@@ -43,6 +56,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
                     shift = AFTER
             ))
     private void keepAbilities(GameMode newMode, GameMode previousMode, CallbackInfo info) {
+        player.abilities.flying = PAL_FLYING.get(); // will be overruled if unworthy
         PlayerAbilityView.of(this.player).refreshAllPalAbilities(false);
     }
 }
