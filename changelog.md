@@ -1,4 +1,11 @@
 ------------------------------------------------------
+Version 1.2.0
+------------------------------------------------------
+- Updated to 1.16
+- Fixed ability source serialization
+- Fixed players losing flight when their gamemode is refreshed by the game
+
+------------------------------------------------------
 Version 1.1.0
 ------------------------------------------------------
 - The mod's interfaces can no longer be accessed from a client world
