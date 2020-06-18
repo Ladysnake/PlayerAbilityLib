@@ -23,7 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
 
 import java.util.HashSet;
@@ -103,15 +102,19 @@ public class SimpleAbilityTracker implements AbilityTracker {
     public void save(CompoundTag tag) {
         ListTag list = new ListTag();
         for (AbilitySource abilitySource : this.abilitySources) {
-            list.add(StringTag.of(abilitySource.toString()));
+            list.add(StringTag.of(abilitySource.getId().toString()));
         }
         tag.put("ability_sources", list);
     }
 
     @Override
     public void load(CompoundTag tag) {
-        for (Tag id : tag.getList("ability_sources", NbtType.STRING)) {
-            this.addSource(Pal.getAbilitySource(new Identifier(id.asString())));
+        ListTag list = tag.getList("ability_sources", NbtType.STRING);
+        for (int i = 0; i < list.size(); i++) {
+            Identifier sourceId = Identifier.tryParse(list.getString(i));
+            if (sourceId != null) {
+                this.addSource(Pal.getAbilitySource(sourceId));
+            }
         }
     }
 

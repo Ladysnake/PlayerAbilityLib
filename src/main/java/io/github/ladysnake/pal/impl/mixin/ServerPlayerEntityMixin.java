@@ -97,14 +97,17 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         ListTag list = new ListTag();
         for (Map.Entry<PlayerAbility, AbilityTracker> entry : this.palAbilities.entrySet()) {
             CompoundTag abilityTag = new CompoundTag();
-            abilityTag.putString("ability_id", entry.getKey().toString());
+            abilityTag.putString("ability_id", entry.getKey().getId().toString());
             entry.getValue().save(abilityTag);
             list.add(abilityTag);
         }
         tag.put("playerabilitylib:abilities", list);
     }
 
-    @Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
+    @Inject(
+        method = "readCustomDataFromTag",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.AFTER)
+    )
     private void readAbilitiesFromTag(CompoundTag tag, CallbackInfo ci) {
         for (Tag t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
             CompoundTag abilityTag = ((CompoundTag) t);
