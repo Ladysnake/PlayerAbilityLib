@@ -42,7 +42,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
             method = "setGameMode",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/GameMode;setAbilitites(Lnet/minecraft/entity/player/PlayerAbilities;)V"
+                    target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V"
             ))
     private void saveFlying(GameMode newMode, GameMode previousMode, CallbackInfo info) {
         PAL_FLYING.set(player.abilities.flying);
@@ -52,7 +52,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
             method = "setGameMode",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/GameMode;setAbilitites(Lnet/minecraft/entity/player/PlayerAbilities;)V",
+                    target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V",
                     shift = AFTER
             ))
     private void keepAbilities(GameMode newMode, GameMode previousMode, CallbackInfo info) {

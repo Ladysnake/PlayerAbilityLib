@@ -43,7 +43,7 @@ public interface PlayerAbilityView {
      */
     static PlayerAbilityView of(PlayerEntity player) {
         if (player.world.isClient) {
-          throw new IllegalStateException("Player abilities must be accessed from the logical server !");
+            throw new IllegalStateException("Player abilities must be accessed from the logical server (check !world.isClient)");
         }
         return (PlayerAbilityView) player;
     }

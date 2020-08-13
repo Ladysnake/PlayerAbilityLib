@@ -51,8 +51,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     @Unique
     private final Map<PlayerAbility, AbilityTracker> palAbilities = new LinkedHashMap<>();
 
-    public ServerPlayerEntityMixin(World world, BlockPos pos, GameProfile profile) {
-        super(world, pos, profile);
+    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
+        super(world, pos, yaw, profile);
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
