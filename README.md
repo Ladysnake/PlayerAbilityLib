@@ -15,7 +15,10 @@ You can add the library by inserting the following in your `build.gradle` :
 
 ```gradle
 repositories {
-    jcenter()
+    maven {
+        name = "Ladysnake Libs"
+        url = "https://dl.bintray.com/ladysnake/libs"
+    }
 }
 
 dependencies {
