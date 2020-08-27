@@ -70,7 +70,7 @@ public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand han
 public static final AbilitySource FLIGHT_POTION = Pal.getAbilitySource("mymod", "flight_potion");
 
 @Override
-public void onApplied(LivingEntity effected, AbstractEntityAttributeContainer abstractEntityAttributeContainer, int amplifier) {
+public void onApplied(LivingEntity effected, AbstractEntityAttributeContainer attributes, int amplifier) {
     if (effected instanceof PlayerEntity) {
         Pal.grantAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         // equivalent to: FLIGHT_POTION.grantTo((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
@@ -78,7 +78,7 @@ public void onApplied(LivingEntity effected, AbstractEntityAttributeContainer ab
 }
 
 @Override
-public void onRemoved(LivingEntity effected, AbstractEntityAttributeContainer abstractEntityAttributeContainer, int amplifier) {
+public void onRemoved(LivingEntity effected, AbstractEntityAttributeContainer attributes, int amplifier) {
     if (effected instanceof PlayerEntity) {
         Pal.revokeAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         // equivalent to: FLIGHT_POTION.revokeFrom((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
