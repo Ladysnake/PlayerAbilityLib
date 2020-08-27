@@ -7,6 +7,8 @@ A lightweight serverside library to provide compatibility between mods that make
 Conflicts arise often when several mods update the same field in `PlayerAbilities`. This library exists so that
 all modifications can be made from a single place, keeping track of what mod enabled what ability.
 
+**Looking for the Elytra Flight equivalent? Try [FallFlyingLib](https://github.com/adriantodt/FallFlyingLib).**
+
 *credits to ~~InsomniaPrincess~~ Chloe Dawn for some of the API design*
 
 ## Adding PAL to your project
