@@ -39,24 +39,24 @@ public abstract class ServerPlayerInteractionManagerMixin {
     public ServerPlayerEntity player;
 
     @Inject(
-            method = "setGameMode",
+            method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V"
             ))
     private void saveFlying(GameMode newMode, GameMode previousMode, CallbackInfo info) {
-        PAL_FLYING.set(player.abilities.flying);
+        PAL_FLYING.set(player.getAbilities().flying);
     }
 
     @Inject(
-            method = "setGameMode",
+            method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V",
                     shift = AFTER
             ))
     private void keepAbilities(GameMode newMode, GameMode previousMode, CallbackInfo info) {
-        player.abilities.flying = PAL_FLYING.get(); // will be overruled if unworthy
+        player.getAbilities().flying = PAL_FLYING.get(); // will be overruled if unworthy
         PlayerAbilityView.of(this.player).refreshAllPalAbilities(false);
     }
 }

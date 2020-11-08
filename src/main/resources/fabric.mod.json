@@ -28,7 +28,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.16-"
+    "minecraft": ">=1.17-"
   },
   "custom": {
     "modmenu:api": true

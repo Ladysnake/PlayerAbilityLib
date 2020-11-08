@@ -47,7 +47,7 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
     }
 
     private void updateBacking(boolean enabled) {
-        this.setter.set(getGamemode(this.player), this.player.abilities, enabled);
+        this.setter.set(getGamemode(this.player), this.player.getAbilities(), enabled);
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
 
     @Override
     public boolean isEnabled() {
-        return this.getter.test(this.player.abilities);
+        return this.getter.test(this.player.getAbilities());
     }
 
     public void checkConflict() {

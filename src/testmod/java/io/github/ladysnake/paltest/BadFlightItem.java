@@ -27,10 +27,10 @@ public class BadFlightItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
             // Direct ability access, issues abound !
-            user.abilities.allowFlying = !user.abilities.allowFlying;
-            user.abilities.flying &= user.abilities.allowFlying;
+            user.getAbilities().allowFlying = !user.getAbilities().allowFlying;
+            user.getAbilities().flying &= user.getAbilities().allowFlying;
             user.sendAbilitiesUpdate();
-            user.sendMessage(new LiteralText("Flight " + (user.abilities.allowFlying ? "enabled" : "disabled")), true);
+            user.sendMessage(new LiteralText("Flight " + (user.getAbilities().allowFlying ? "enabled" : "disabled")), true);
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }
