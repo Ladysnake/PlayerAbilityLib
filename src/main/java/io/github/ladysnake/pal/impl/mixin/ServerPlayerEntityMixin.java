@@ -56,7 +56,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
+    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
         PalInternals.populate(this, this.palAbilities);
     }
 
@@ -92,7 +92,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         }
     }
 
-    @Inject(method = "writeCustomDataToTag", at = @At("RETURN"))
+    @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
     private void writeAbilitiesToTag(CompoundTag tag, CallbackInfo ci) {
         ListTag list = new ListTag();
         for (Map.Entry<PlayerAbility, AbilityTracker> entry : this.palAbilities.entrySet()) {
@@ -105,8 +105,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     }
 
     @Inject(
-        method = "readCustomDataFromTag",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.AFTER)
+        method = "readCustomDataFromNbt",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.AFTER)
     )
     private void readAbilitiesFromTag(CompoundTag tag, CallbackInfo ci) {
         for (Tag t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
