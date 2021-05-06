@@ -6,7 +6,7 @@ plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id "net.minecrell.licenser" version "0.4.1"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id "com.jfrog.bintray" version '1.8.4'
+    id 'com.jfrog.artifactory' version '4.21.0'
     id 'org.ajoberstar.grgit' version '3.1.1'
     id 'com.github.breadmoirai.github-release' version '2.2.9'
     id 'java-library'
