@@ -39,7 +39,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
     public ServerPlayerEntity player;
 
     @Inject(
-            method = "setGameMode",
+            method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V"
@@ -49,7 +49,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
     }
 
     @Inject(
-            method = "setGameMode",
+            method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V",

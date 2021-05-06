@@ -18,8 +18,12 @@ You can add the library by inserting the following in your `build.gradle` :
 ```gradle
 repositories {
     maven {
-        name = "Ladysnake Libs"
-        url = "https://dl.bintray.com/ladysnake/libs"
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+        content {
+            includeGroup 'io.github.ladysnake'
+            includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+        }
     }
 }
 
