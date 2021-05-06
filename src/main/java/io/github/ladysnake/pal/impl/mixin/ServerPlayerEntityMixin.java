@@ -26,12 +26,11 @@ import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -93,10 +92,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
-    private void writeAbilitiesToTag(CompoundTag tag, CallbackInfo ci) {
-        ListTag list = new ListTag();
+    private void writeAbilitiesToTag(NbtCompound tag, CallbackInfo ci) {
+        NbtList list = new NbtList();
         for (Map.Entry<PlayerAbility, AbilityTracker> entry : this.palAbilities.entrySet()) {
-            CompoundTag abilityTag = new CompoundTag();
+            NbtCompound abilityTag = new NbtCompound();
             abilityTag.putString("ability_id", entry.getKey().getId().toString());
             entry.getValue().save(abilityTag);
             list.add(abilityTag);
@@ -106,11 +105,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
 
     @Inject(
         method = "readCustomDataFromNbt",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/CompoundTag;)V", shift = At.Shift.AFTER)
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER)
     )
-    private void readAbilitiesFromTag(CompoundTag tag, CallbackInfo ci) {
-        for (Tag t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
-            CompoundTag abilityTag = ((CompoundTag) t);
+    private void readAbilitiesFromTag(NbtCompound tag, CallbackInfo ci) {
+        for (NbtElement t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
+            NbtCompound abilityTag = ((NbtCompound) t);
             if (abilityTag.contains("ability_id")) {
                 Identifier abilityId = Identifier.tryParse(abilityTag.getString("ability_id"));
                 if (abilityId != null) {

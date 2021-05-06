@@ -17,7 +17,7 @@
  */
 package io.github.ladysnake.pal;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -87,7 +87,7 @@ public interface AbilityTracker {
      * @param tag the tag to write to
      */
     @Contract(mutates = "param")
-    void save(CompoundTag tag);
+    void save(NbtCompound tag);
 
     /**
      * Loads a serialized form of an {@code AbilityTracker} from {@code tag} into this object.
@@ -95,5 +95,5 @@ public interface AbilityTracker {
      * @param tag the tag to read from
      */
     @Contract(mutates = "this")
-    void load(CompoundTag tag);
+    void load(NbtCompound tag);
 }

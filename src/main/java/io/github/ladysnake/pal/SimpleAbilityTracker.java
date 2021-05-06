@@ -20,9 +20,9 @@ package io.github.ladysnake.pal;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 
 import java.util.HashSet;
@@ -99,17 +99,17 @@ public class SimpleAbilityTracker implements AbilityTracker {
     }
 
     @Override
-    public void save(CompoundTag tag) {
-        ListTag list = new ListTag();
+    public void save(NbtCompound tag) {
+        NbtList list = new NbtList();
         for (AbilitySource abilitySource : this.abilitySources) {
-            list.add(StringTag.of(abilitySource.getId().toString()));
+            list.add(NbtString.of(abilitySource.getId().toString()));
         }
         tag.put("ability_sources", list);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        ListTag list = tag.getList("ability_sources", NbtType.STRING);
+    public void load(NbtCompound tag) {
+        NbtList list = tag.getList("ability_sources", NbtType.STRING);
         for (int i = 0; i < list.size(); i++) {
             Identifier sourceId = Identifier.tryParse(list.getString(i));
             if (sourceId != null) {

@@ -17,6 +17,7 @@
  */
 package io.github.ladysnake.pal;
 
+import com.google.common.base.Suppliers;
 import io.github.ladysnake.pal.impl.PalInternals;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 /**
  * Player Ability Lib's main class. Provides static methods to interact with player abilities.
@@ -172,8 +174,8 @@ public final class Pal implements ModInitializer {
      * @return a lazy supplier for a player ability registered with the given {@code abilityId}
      * @throws NullPointerException if {@code abilityId} is null
      */
-    public static Lazy<PlayerAbility> provideRegisteredAbility(Identifier abilityId) {
-        return new Lazy<>(() -> Objects.requireNonNull(PalInternals.getAbility(abilityId), abilityId + " has not been registered"));
+    public static Supplier<PlayerAbility> provideRegisteredAbility(Identifier abilityId) {
+        return Suppliers.memoize(() -> Objects.requireNonNull(PalInternals.getAbility(abilityId), abilityId + " has not been registered"));
     }
 
     @Override
