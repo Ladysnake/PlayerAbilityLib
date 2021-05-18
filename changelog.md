@@ -2,6 +2,7 @@
 Version 1.2.2
 ------------------------------------------------------
 - Fixed a desync when changing dimension through teleportation
+- Fixed false positives when checking for concurrent modifications while the player's gamemode is still unset
 
 ------------------------------------------------------
 Version 1.2.1

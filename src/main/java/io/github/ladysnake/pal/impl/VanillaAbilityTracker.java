@@ -61,6 +61,11 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
     }
 
     public void checkConflict() {
+        if (this.player instanceof ServerPlayerEntity
+            && ((ServerPlayerEntity) this.player).interactionManager.getGameMode() == GameMode.NOT_SET) {
+            return;
+        }
+
         boolean enabled = this.isEnabled();
         this.updateBacking(this.shouldBeEnabled()); // avoid false positives from gamemode changes
         boolean expected = this.isEnabled();
