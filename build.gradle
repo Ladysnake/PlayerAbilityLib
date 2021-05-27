@@ -3,8 +3,8 @@ import net.fabricmc.loom.task.RemapJarTask
 import java.time.Year
 
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
-    id "net.minecrell.licenser" version "0.4.1"
+    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id "org.cadixdev.licenser" version "0.6.0"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'com.jfrog.artifactory' version '4.21.0'
     id 'org.ajoberstar.grgit' version '3.1.1'
@@ -13,8 +13,8 @@ plugins {
     id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -38,19 +38,14 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     api "org.jetbrains:annotations:19.0.0"
 
-    testmodCompile sourceSets.main.output
+    testmodImplementation sourceSets.main.output
 }
 
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
     }
 }
 
@@ -92,8 +87,6 @@ build.dependsOn(remapTestmodJar)
 license {
     header = rootProject.file("code_quality/${project.license_header}_HEADER.txt")
 
-    // Apply licenses only to main source set
-    sourceSets = [project.sourceSets.main]
     include "**/*.java"
 
     newLine = false // Disables the empty line between the header and package name
@@ -102,7 +95,7 @@ license {
     //export variables
     ext {
         year = Year.now()
-        projectDisplayName = project.name
+        projectDisplayName = project.display_name
         projectOwners = rootProject.owners
         if (project.license_header.contains('GPL')) {
             if (!project.hasProperty("gpl_version")) {
