@@ -27,7 +27,8 @@ sourceSets {
     }
 }
 
-minecraft {
+loom {
+    refmapName = 'pal-refmap.json'
 }
 
 dependencies {
