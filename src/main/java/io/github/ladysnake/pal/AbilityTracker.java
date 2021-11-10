@@ -17,7 +17,9 @@
  */
 package io.github.ladysnake.pal;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -58,6 +60,19 @@ public interface AbilityTracker {
      */
     @Contract(pure = true)
     boolean isGrantedBy(AbilitySource abilitySource);
+
+    /**
+     * Returns the ability source actively granting this tracker's ability.
+     *
+     * <p>The active source is the one with the highest priority among the sources
+     * currently granting this tracker's ability.
+     *
+     * @return the active source, or {@code null} if no source is granting the ability
+     * @see Pal#getAbilitySource(Identifier, int)
+     * @see AbilitySource#isActivelyGranting(PlayerEntity, PlayerAbility)
+     * @since 1.4.0
+     */
+    AbilitySource getActiveSource();
 
     /**
      * Returns {@code true} if this tracker's ability is currently enabled.

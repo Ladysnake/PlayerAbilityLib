@@ -17,6 +17,7 @@
  */
 package io.github.ladysnake.pal;
 
+import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,8 +26,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * This class provides a basic implementation of the {@code AbilityTracker}
@@ -41,7 +42,7 @@ import java.util.Set;
  */
 public class SimpleAbilityTracker implements AbilityTracker {
     protected final PlayerEntity player;
-    protected final Set<AbilitySource> abilitySources = new HashSet<>();
+    protected final SortedSet<AbilitySource> abilitySources = new TreeSet<>();
     protected final PlayerAbility ability;
 
     public SimpleAbilityTracker(PlayerAbility ability, PlayerEntity player) {
@@ -71,6 +72,11 @@ public class SimpleAbilityTracker implements AbilityTracker {
     @Override
     public boolean isGrantedBy(AbilitySource abilitySource) {
         return this.abilitySources.contains(abilitySource);
+    }
+
+    @Override
+    public AbilitySource getActiveSource() {
+        return this.abilitySources.last();
     }
 
     @Override

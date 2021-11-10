@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public final class PalInternals {
 
@@ -65,16 +65,27 @@ public final class PalInternals {
         return sources.get(sourceId);
     }
 
-    public static AbilitySource registerSource(Identifier sourceId, Function<Identifier, AbilitySource> factory) {
+    public static AbilitySource registerSource(Identifier sourceId, @Nullable Integer priority, BiFunction<Identifier, Integer, AbilitySource> factory) {
         Preconditions.checkNotNull(sourceId);
-        AbilitySource value = sources.get(sourceId);
-        if (value == null) {
+        AbilitySource existing = sources.get(sourceId);
+
+        if (existing == null) {
             synchronized (sources) {
-                return sources.computeIfAbsent(sourceId, factory); // off-chance that someone modifies the map concurrently
+                existing = sources.get(sourceId);
+                // off-chance that someone modifies the map concurrently
+                if (existing == null) {
+                    AbilitySource source = factory.apply(sourceId, priority == null ? AbilitySource.DEFAULT : priority);
+                    sources.put(sourceId, source);
+                    return source;
+                }
             }
         }
 
-        return value;
+        if (priority != null && existing.getPriority() != priority) {
+            throw new IllegalStateException(sourceId + " has been registered twice with differing priorities: " + existing.getPriority() + ", " + priority);
+        }
+
+        return existing;
     }
 
     public static boolean isAbilityRegistered(Identifier abilityId) {

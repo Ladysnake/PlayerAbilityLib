@@ -22,7 +22,6 @@ import io.github.ladysnake.pal.impl.PalInternals;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Lazy;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -68,7 +67,7 @@ public final class Pal implements ModInitializer {
      *
      * @param player  the player on which to enable the ability
      * @param ability the ability to enable
-     * @param reason the reason for which the player should get the ability
+     * @param reason  the reason for which the player should get the ability
      * @since 1.0.1
      */
     public static void grantAbility(PlayerEntity player, PlayerAbility ability, AbilitySource reason) {
@@ -87,7 +86,7 @@ public final class Pal implements ModInitializer {
      *
      * @param player  the player to revoke the ability from
      * @param ability the ability to revoke
-     * @param reason the reason for which the player had the ability
+     * @param reason  the reason for which the player had the ability
      * @since 1.0.1
      */
     public static void revokeAbility(PlayerEntity player, PlayerAbility ability, AbilitySource reason) {
@@ -108,11 +107,11 @@ public final class Pal implements ModInitializer {
     }
 
     /**
-     * Returns an {@code AbilitySource} corresponding to the given {abilitySourceId}.
+     * Returns an {@code AbilitySource} corresponding to the given {@code abilitySourceId}.
      *
-     * <p> Calling this method multiple times with equivalent identifiers results
+     * <p>Calling this method multiple times with equivalent identifiers results
      * in a single instance being returned. More formally, for any two Identifiers
-     * {@code i1} and {@code i2}, {code getAbilitySource(i1) == getAbilitySource(i1)}
+     * {@code i1} and {@code i2}, {@code registerAbilitySource(i1) == registerAbilitySource(i2)}
      * is true if and only if {@code i1.equals(i2)}.
      *
      * @param abilitySourceId a unique identifier for the ability source
@@ -120,7 +119,35 @@ public final class Pal implements ModInitializer {
      * @throws NullPointerException if {@code abilitySourceId} is null
      */
     public static AbilitySource getAbilitySource(Identifier abilitySourceId) {
-        return PalInternals.registerSource(abilitySourceId, AbilitySource::new);
+        return PalInternals.registerSource(abilitySourceId, null, AbilitySource::new);
+    }
+
+    /**
+     * Returns an {@code AbilitySource} corresponding to the given {@code abilitySourceId}.
+     *
+     * <p>Calling this method multiple times with equivalent identifiers results
+     * in a single instance being returned. More formally, for any two Identifiers
+     * {@code i1} and {@code i2}, {@code registerAbilitySource(i1) == registerAbilitySource(i2)}
+     * is true if and only if {@code i1.equals(i2)}.
+     *
+     * <p>The {@code priority} determines which source will show up as the {@linkplain AbilityTracker#getActiveSource() active one}
+     * in the event multiple sources are granting the same ability. This can be used to e.g. avoid wasting fuel
+     * through multiple flight items, or only show one animation at a time.
+     *
+     * @param abilitySourceId a unique identifier for the ability source
+     * @return an {@code AbilitySource} for {@code abilitySourceId}
+     * @throws NullPointerException  if {@code abilitySourceId} is null
+     * @throws IllegalStateException if another source was already registered with a different {@code priority}
+     * @see AbilitySource#FREE
+     * @see AbilitySource#RENEWABLE
+     * @see AbilitySource#DEFAULT
+     * @see AbilitySource#CONSUMABLE
+     * @see AbilityTracker#getActiveSource()
+     * @see AbilitySource#isActivelyGranting(PlayerEntity, PlayerAbility)
+     * @since 1.4.0
+     */
+    public static AbilitySource getAbilitySource(Identifier abilitySourceId, int priority) {
+        return PalInternals.registerSource(abilitySourceId, priority, AbilitySource::new);
     }
 
     /**
@@ -131,8 +158,8 @@ public final class Pal implements ModInitializer {
      * @param path      path of this ability's identifier
      * @param factory   a factory to create {@code ToggleableAbility} instances for every player
      * @return a {@code PlayerAbility} registered with the constructed id
-     * @see #registerAbility(String, String, BiFunction)
      * @throws NullPointerException if any of the arguments is null
+     * @see #registerAbility(String, String, BiFunction)
      */
     public static PlayerAbility registerAbility(String namespace, String path, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> factory) {
         return registerAbility(new Identifier(namespace, path), factory);
@@ -148,9 +175,9 @@ public final class Pal implements ModInitializer {
      * @param abilityId a unique identifier for the ability
      * @param factory   a factory to create {@code ToggleableAbility} instances for every player
      * @throws IllegalStateException if {@code abilityId}
+     * @throws NullPointerException  if any of the arguments is null
      * @apiNote abilities must be registered during initialization.
      * @see SimpleAbilityTracker
-     * @throws NullPointerException if any of the arguments is null
      */
     public static PlayerAbility registerAbility(Identifier abilityId, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> factory) {
         return PalInternals.registerAbility(new PlayerAbility(Objects.requireNonNull(abilityId), Objects.requireNonNull(factory)));
@@ -175,6 +202,7 @@ public final class Pal implements ModInitializer {
      * @throws NullPointerException if {@code abilityId} is null
      */
     public static Supplier<PlayerAbility> provideRegisteredAbility(Identifier abilityId) {
+        Objects.requireNonNull(abilityId, "abilityId cannot be null");
         return Suppliers.memoize(() -> Objects.requireNonNull(PalInternals.getAbility(abilityId), abilityId + " has not been registered"));
     }
 
