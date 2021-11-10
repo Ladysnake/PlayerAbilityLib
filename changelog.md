@@ -1,4 +1,10 @@
 ------------------------------------------------------
+Version 1.4.0
+------------------------------------------------------
+- Ability sources that are missing during deserialization will now be removed with a warning instead of sticking around forever
+- PAL properties will now persist after a dimension change
+
+------------------------------------------------------
 Version 1.3.0
 ------------------------------------------------------
 - Updated to 1.17
