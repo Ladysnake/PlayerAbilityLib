@@ -21,6 +21,7 @@ import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.world.GameMode;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -35,8 +36,9 @@ public abstract class ServerPlayerInteractionManagerMixin {
     @Unique
     private static final ThreadLocal<Boolean> PAL_FLYING = new ThreadLocal<>();
 
+    @Final
     @Shadow
-    public ServerPlayerEntity player;
+    protected ServerPlayerEntity player;
 
     @Inject(
             method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",

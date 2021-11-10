@@ -110,13 +110,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     private void readAbilitiesFromTag(NbtCompound tag, CallbackInfo ci) {
         for (NbtElement t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
             NbtCompound abilityTag = ((NbtCompound) t);
-            if (abilityTag.contains("ability_id")) {
-                Identifier abilityId = Identifier.tryParse(abilityTag.getString("ability_id"));
-                if (abilityId != null) {
-                    AbilityTracker ability = this.palAbilities.get(PalInternals.getAbility(abilityId));
-                    if (ability != null) {
-                        ability.load(abilityTag);
-                    }
+            if (abilityTag.contains("ability_id", NbtElement.STRING_TYPE)) {
+                String abilityId = abilityTag.getString("ability_id");
+                AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
+                if (tracker != null) {
+                    tracker.load(abilityTag);
+                } else {
+                    PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
                 }
             }
         }

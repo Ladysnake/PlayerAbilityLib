@@ -111,9 +111,11 @@ public class SimpleAbilityTracker implements AbilityTracker {
     public void load(NbtCompound tag) {
         NbtList list = tag.getList("ability_sources", NbtType.STRING);
         for (int i = 0; i < list.size(); i++) {
-            Identifier sourceId = Identifier.tryParse(list.getString(i));
-            if (sourceId != null) {
-                this.addSource(Pal.getAbilitySource(sourceId));
+            AbilitySource source = PalInternals.getSource(Identifier.tryParse(list.getString(i)));
+            if (source != null) {
+                this.addSource(source);
+            } else {
+                PalInternals.LOGGER.warn("Unknown ability source {} attached to {} for {}", list.getString(i), this.player, this.ability);
             }
         }
     }

@@ -28,6 +28,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +48,8 @@ public final class PalInternals {
         }
     }
 
-    public static PlayerAbility getAbility(Identifier id) {
-        Preconditions.checkNotNull(id);
+    @Contract("null -> null; !null -> _")
+    public static @Nullable PlayerAbility getAbility(@Nullable Identifier id) {
         return abilities.get(id);
     }
 
@@ -57,6 +59,10 @@ public final class PalInternals {
         }
         abilities.put(ability.getId(), ability);
         return ability;
+    }
+
+    public static AbilitySource getSource(@Nullable Identifier sourceId) {
+        return sources.get(sourceId);
     }
 
     public static AbilitySource registerSource(Identifier sourceId, Function<Identifier, AbilitySource> factory) {
