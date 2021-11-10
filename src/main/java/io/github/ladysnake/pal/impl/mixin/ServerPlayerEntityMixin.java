@@ -81,6 +81,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         }
     }
 
+    @Inject(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V", shift = At.Shift.AFTER))
+    private void copyAbilitiesAfterRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
+        if (alive) {
+            NbtCompound nbt = new NbtCompound();
+            //noinspection ConstantConditions
+            ((ServerPlayerEntityMixin) (Object) oldPlayer).writeAbilitiesToTag(nbt, null);
+            this.readAbilitiesFromTag(nbt, null);
+        }
+    }
+
     @Inject(method = "sendAbilitiesUpdate", at = @At(value = "NEW", target = "net/minecraft/network/packet/s2c/play/PlayerAbilitiesS2CPacket"))
     private void checkAbilityConsistency(CallbackInfo ci) {
         for (PlayerAbility ability : this.listPalAbilities()) {
