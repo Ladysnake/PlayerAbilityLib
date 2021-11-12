@@ -17,10 +17,18 @@
  */
 package io.github.ladysnake.paltest;
 
+import io.github.ladysnake.pal.AbilitySource;
+import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -33,10 +41,28 @@ public final class PalTest implements ModInitializer {
     @Override
     public void onInitialize() {
         PalTestAbilities.init();
+        this.registerWaxWings();
         Registry.register(Registry.ITEM, id("bad_charm"), new BadFlightItem(new Item.Settings()));
         Registry.register(Registry.ITEM, id("flight_charm"), new AbilityToggleItem(new Item.Settings(), VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
         Registry.register(Registry.ITEM, id("kryptonite"), new AbilityToggleItem(new Item.Settings(), PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
         Registry.register(Registry.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectType.BENEFICIAL, 0xFFFFFF));
     }
 
+    private void registerWaxWings() {
+        Item waxWings = Registry.register(Registry.ITEM, id("wax_wings"), new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.CHEST, new Item.Settings()));
+        AbilitySource source = Pal.getAbilitySource(id("wax_wings"), AbilitySource.CONSUMABLE);
+        ServerTickEvents.START_SERVER_TICK.register(server -> {
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                ItemStack chestplate = player.getEquippedStack(EquipmentSlot.CHEST);
+                if (chestplate.getItem() == waxWings) {
+                    source.grantTo(player, VanillaAbilities.ALLOW_FLYING);
+                    if (source.isActivelyGranting(player, VanillaAbilities.ALLOW_FLYING)) {
+                        chestplate.damage(1, player.getRandom(), player);
+                    }
+                } else {
+                    source.revokeFrom(player, VanillaAbilities.ALLOW_FLYING);
+                }
+            }
+        });
+    }
 }
