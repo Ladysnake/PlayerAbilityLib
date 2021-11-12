@@ -23,8 +23,8 @@ import io.github.ladysnake.pal.VanillaAbilities;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
  * A status effect that gives creative flight to players
@@ -32,23 +32,23 @@ import net.minecraft.entity.player.PlayerEntity;
 public class FlightEffect extends StatusEffect {
     public static final AbilitySource FLIGHT_POTION = Pal.getAbilitySource(PalTest.id("potion_flight"));
 
-    public FlightEffect(StatusEffectType statusEffectType, int color) {
+    public FlightEffect(StatusEffectCategory statusEffectType, int color) {
         super(statusEffectType, color);
     }
 
     @Override
     public void onApplied(LivingEntity effected, AttributeContainer abstractEntityAttributeContainer, int amplifier) {
         super.onApplied(effected, abstractEntityAttributeContainer, amplifier);
-        if (effected instanceof PlayerEntity) {
-            Pal.grantAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
+        if (effected instanceof ServerPlayerEntity sp) {
+            Pal.grantAbility(sp, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         }
     }
 
     @Override
     public void onRemoved(LivingEntity effected, AttributeContainer abstractEntityAttributeContainer, int amplifier) {
         super.onRemoved(effected, abstractEntityAttributeContainer, amplifier);
-        if (effected instanceof PlayerEntity) {
-            Pal.revokeAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
+        if (effected instanceof ServerPlayerEntity sp) {
+            Pal.revokeAbility(sp, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         }
     }
 }

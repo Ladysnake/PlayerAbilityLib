@@ -23,7 +23,7 @@ import io.github.ladysnake.pal.VanillaAbilities;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
@@ -45,7 +45,7 @@ public final class PalTest implements ModInitializer {
         Registry.register(Registry.ITEM, id("bad_charm"), new BadFlightItem(new Item.Settings()));
         Registry.register(Registry.ITEM, id("flight_charm"), new AbilityToggleItem(new Item.Settings(), VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
         Registry.register(Registry.ITEM, id("kryptonite"), new AbilityToggleItem(new Item.Settings(), PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
-        Registry.register(Registry.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectType.BENEFICIAL, 0xFFFFFF));
+        Registry.register(Registry.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectCategory.BENEFICIAL, 0xFFFFFF));
     }
 
     private void registerWaxWings() {
