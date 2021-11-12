@@ -111,7 +111,7 @@ public final class Pal implements ModInitializer {
      *
      * <p>Calling this method multiple times with equivalent identifiers results
      * in a single instance being returned. More formally, for any two Identifiers
-     * {@code i1} and {@code i2}, {@code registerAbilitySource(i1) == registerAbilitySource(i2)}
+     * {@code i1} and {@code i2}, {@code getAbilitySource(i1) == getAbilitySource(i2)}
      * is true if and only if {@code i1.equals(i2)}.
      *
      * @param abilitySourceId a unique identifier for the ability source
@@ -127,12 +127,12 @@ public final class Pal implements ModInitializer {
      *
      * <p>Calling this method multiple times with equivalent identifiers results
      * in a single instance being returned. More formally, for any two Identifiers
-     * {@code i1} and {@code i2}, {@code registerAbilitySource(i1) == registerAbilitySource(i2)}
+     * {@code i1} and {@code i2}, {@code getAbilitySource(i1) == getAbilitySource(i2)}
      * is true if and only if {@code i1.equals(i2)}.
      *
      * <p>The {@code priority} determines which source will show up as the {@linkplain AbilityTracker#getActiveSource() active one}
      * in the event multiple sources are granting the same ability. This can be used to e.g. avoid wasting fuel
-     * through multiple flight items, or only show one animation at a time.
+     * through multiple flight items.
      *
      * @param abilitySourceId a unique identifier for the ability source
      * @return an {@code AbilitySource} for {@code abilitySourceId}

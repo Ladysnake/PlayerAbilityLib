@@ -21,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A tracker for a player ability that can be turned on or off.
@@ -64,15 +65,19 @@ public interface AbilityTracker {
     /**
      * Returns the ability source actively granting this tracker's ability.
      *
-     * <p>The active source is the one with the highest priority among the sources
-     * currently granting this tracker's ability.
+     * <p>The active source is the one considered highest among the sources currently granting this tracker's ability,
+     * according to {@link AbilitySource#compareTo(AbilitySource)}.
+     * This means that an {@code AbilitySource} with
+     * a higher {@linkplain AbilitySource#getPriority() priority} is more likely to be considered "active".
+     * .
      *
      * @return the active source, or {@code null} if no source is granting the ability
      * @see Pal#getAbilitySource(Identifier, int)
      * @see AbilitySource#isActivelyGranting(PlayerEntity, PlayerAbility)
+     * @see AbilitySource#compareTo(AbilitySource)
      * @since 1.4.0
      */
-    AbilitySource getActiveSource();
+    @Nullable AbilitySource getActiveSource();
 
     /**
      * Returns {@code true} if this tracker's ability is currently enabled.

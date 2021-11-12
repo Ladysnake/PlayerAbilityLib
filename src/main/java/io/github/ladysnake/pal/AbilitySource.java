@@ -128,11 +128,11 @@ public final class AbilitySource implements Comparable<AbilitySource> {
      *
      * <p>At most one {@code AbilitySource} can return {@code true} for a given player and ability.
      * When more than one source is granting the same ability, the one considered active is the highest
-     * one according to {@link #compareTo(AbilitySource)}.
+     * one according to {@link #compareTo(AbilitySource)}. This means that an {@code AbilitySource} with
+     * a higher {@linkplain #getPriority() priority} is more likely to be considered "active".
      *
      * <p>This method can be used to check if side effects should trigger for a specific ability source,
-     * e.g. to avoid wasting jetpack fuel when multiple sources are giving flight at the same time,
-     * or to avoid showing concurrent animations.
+     * e.g. to avoid wasting jetpack fuel when multiple sources are giving flight at the same time.
      *
      * @param player  the player to check on
      * @param ability an ability that may be granted by this source
@@ -148,7 +148,8 @@ public final class AbilitySource implements Comparable<AbilitySource> {
      * Compares two ability sources.
      *
      * <p>The comparison is based on the assigned {@linkplain #getPriority() priority},
-     * with ties being resolved arbitrarily.
+     * with ties being resolved arbitrarily. Priorities are compared using their natural ordering,
+     * meaning a higher priority causes the source to be considered higher.
      *
      * @param o the source to be compared.
      * @return the value {@code 0} if the argument source is equal to
