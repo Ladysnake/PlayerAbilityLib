@@ -1,6 +1,7 @@
 ------------------------------------------------------
 Version 1.4.0
 ------------------------------------------------------
+- Ability sources are now ordered using ascending priorities, giving mods a way to tell whether their source should be considered active for side effects
 - Ability sources that are missing during deserialization will now be removed with a warning instead of sticking around forever
 - PAL properties will now persist after a dimension change
 
