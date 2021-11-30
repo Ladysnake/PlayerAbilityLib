@@ -1,4 +1,9 @@
 ------------------------------------------------------
+Version 1.5.0
+------------------------------------------------------
+- Updated to MC 1.18
+
+------------------------------------------------------
 Version 1.4.0
 ------------------------------------------------------
 - Ability sources that are missing during deserialization will now be removed with a warning instead of sticking around forever
