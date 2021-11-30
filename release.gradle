@@ -85,9 +85,7 @@ publishing {
 }
 
 curseforge {
-    if (project.hasProperty('curse_key') != null) {
-        apiKey = project.findProperty('curse_key')
-    }
+    apiKey = project.findProperty('curse_key') ?: ""
 
     if (project.hasProperty('curseforge_id')) {
         project {
