@@ -35,8 +35,8 @@ import net.minecraft.world.World;
  * An item that toggles an arbitrary ability using PAL
  */
 public class AbilityToggleItem extends Item {
-    private PlayerAbility ability;
-    private AbilitySource abilitySource;
+    private final PlayerAbility ability;
+    private final AbilitySource abilitySource;
 
     public AbilityToggleItem(Settings settings, PlayerAbility abilityId, Identifier abilitySourceId) {
         super(settings);

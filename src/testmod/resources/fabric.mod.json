@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "io.github.ladysnake.paltest.PalTest"
+    ],
+    "fabric-gametest": [
+      "io.github.ladysnake.paltest.PalTestSuite"
     ]
   },
   "depends": {
