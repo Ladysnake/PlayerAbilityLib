@@ -3,63 +3,33 @@ import net.fabricmc.loom.task.RemapJarTask
 import java.time.Year
 
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
-    id "org.cadixdev.licenser" version "0.6.1"
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'com.jfrog.artifactory' version '4.21.0'
-    id 'org.ajoberstar.grgit' version '3.1.1'
-    id 'com.github.breadmoirai.github-release' version '2.2.12'
-    id 'java-library'
-    id 'maven-publish'
+    id 'io.github.ladysnake.chenille' version '0.7.0'
+    id 'io.github.juuxel.loom-quiltflower' version "1.6.0"
 }
-
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-sourceSets {
-    testmod {
-        compileClasspath += main.compileClasspath
-        runtimeClasspath += main.runtimeClasspath
+chenille {
+    configurePublishing {
+        withArtifactory()
+        withCurseforgeRelease()
+        withGithubRelease()
     }
+
+    configureTestmod {
+        withBaseTestRuns()
+        withDependencyConfiguration()
+    }
+
+    license = project.license_header
+    javaVersion = 17
 }
 
-loom {
-    refmapName = 'pal-refmap.json'
-    runs {
-        testmodClient {
-            client()
-            name = "Testmod Client"
-            source sourceSets.testmod
-        }
-        testmodServer {
-            server()
-            name = "Testmod Server"
-            source sourceSets.testmod
-        }
-        gametest {
-            inherit testmodServer
-
-            name = "Game Test"
-
-            // Enable the gametest runner
-            vmArg "-Dfabric-api.gametest"
-            vmArg "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml"
-            runDir "build/gametest"
-        }
-        autoTestServer {
-            inherit testmodServer
-
-            name = "Auto Test Server"
-
-            vmArg "-Dfabric.autoTest"
-        }
-    }
+repositories {
+    chenille.repositories.ladysnake()
 }
-check.dependsOn runGametest
 
 dependencies {
     //to change the versions see the gradle.properties file
@@ -67,9 +37,14 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modTestImplementation "io.github.ladysnake:elmendorf:0.5.2"
     api "org.jetbrains:annotations:19.0.0"
 
     testmodImplementation sourceSets.main.output
+}
+
+java {
+    withSourcesJar()
 }
 
 processResources {
@@ -78,21 +53,6 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
-}
-
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = "sources"
-    from sourceSets.main.allSource
 }
 
 task testmodJar(type: Jar, dependsOn: testmodClasses) {
@@ -114,27 +74,3 @@ task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
 }
 
 build.dependsOn(remapTestmodJar)
-
-license {
-    header = rootProject.file("code_quality/${project.license_header}_HEADER.txt")
-
-    include "**/*.java"
-
-    newLine = false // Disables the empty line between the header and package name
-    //ignoreFailures = true //Ignore failures and only print a warning on license violations
-
-    //export variables
-    ext {
-        year = Year.now()
-        projectDisplayName = project.display_name
-        projectOwners = rootProject.owners
-        if (project.license_header.contains('GPL')) {
-            if (!project.hasProperty("gpl_version")) {
-                throw new RuntimeException("GPL version needs to be specified through the 'gpl_version' property")
-            }
-            gplVersion = project.gpl_version
-        }
-    }
-}
-
-apply from: 'release.gradle'
