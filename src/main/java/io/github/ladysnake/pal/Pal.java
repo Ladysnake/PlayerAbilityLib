@@ -209,5 +209,6 @@ public final class Pal implements ModInitializer {
     @Override
     public void onInitialize() {
         new VanillaAbilities();
+        PalInternals.loadConfig();
     }
 }

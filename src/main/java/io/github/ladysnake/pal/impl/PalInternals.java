@@ -24,6 +24,7 @@ import io.github.ladysnake.pal.PlayerAbility;
 import io.github.ladysnake.pal.PlayerAbilityUpdatedCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
@@ -31,13 +32,21 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.BiFunction;
 
 public final class PalInternals {
 
     public static final Logger LOGGER = LogManager.getLogger("PlayerAbilityLib");
+    private static boolean alwaysLogTamperWarnings = true;
+    private static boolean hasLoggedTamperWarning = false;
 
     private static final Map<Identifier, PlayerAbility> abilities = new HashMap<>();
     private static final Map<Identifier, AbilitySource> sources = new HashMap<>();
@@ -45,6 +54,40 @@ public final class PalInternals {
     public static void populate(PlayerEntity player, Map<PlayerAbility, AbilityTracker> map) {
         for (PlayerAbility ability : abilities.values()) {
             map.put(ability, ability.createTracker(player));
+        }
+    }
+
+    public static void logTamperWarning(PlayerAbility ability, boolean enabled, boolean expected) {
+        if (alwaysLogTamperWarnings || !hasLoggedTamperWarning) {
+            PalInternals.LOGGER.warn("Player ability {} was updated externally (expected {}, was {}).",
+                ability.getId(), expected ? "enabled" : "disabled", enabled ? "enabled" : "disabled", new RuntimeException("stacktrace"));
+            hasLoggedTamperWarning = true;
+        }
+    }
+
+    public static void loadConfig() {
+        Path configFile = FabricLoader.getInstance().getConfigDir().resolve("pal.properties");
+        Properties props = new Properties();
+        props.put("alwaysLogTamperWarnings", "true");
+
+        if (Files.exists(configFile)) {
+            try (Reader reader = Files.newBufferedReader(configFile)) {
+                props.load(reader);
+                alwaysLogTamperWarnings = Boolean.parseBoolean(props.getProperty("alwaysLogTamperWarnings"));
+                return;
+            } catch (IOException e) {
+                PalInternals.LOGGER.error("Failed to load config file", e);
+            }
+        }
+
+        try (Writer writer = Files.newBufferedWriter(configFile)) {
+            props.store(writer, String.join("\n",
+                "PlayerAbilityLib configuration file",
+                "",
+                "If alwaysLogTamperWarnings is set to false, external update messages will be logged only once per game session"
+            ));
+        } catch (IOException e) {
+            PalInternals.LOGGER.error("Failed to create config file", e);
         }
     }
 

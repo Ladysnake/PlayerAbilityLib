@@ -68,8 +68,7 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
             // Attempt to satisfy both compliant and rogue mods
             // If the external state and the Pal state are conflicting, one of them tries to make this ability enabled
             this.updateState(true);
-            PalInternals.LOGGER.warn("Player ability {} was updated externally (expected {}, was {}).",
-                this.ability.getId(), expected ? "enabled" : "disabled", enabled ? "enabled" : "disabled", new RuntimeException("stacktrace"));
+            PalInternals.logTamperWarning(this.ability, enabled, expected);
         }
     }
 
