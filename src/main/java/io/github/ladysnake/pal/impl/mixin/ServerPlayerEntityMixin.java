@@ -29,12 +29,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,12 +52,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     @Unique
     private final Map<PlayerAbility, AbilityTracker> palAbilities = new LinkedHashMap<>();
 
-    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
-        super(world, pos, yaw, profile);
+    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
+        super(world, pos, yaw, profile, publicKey);
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
+    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, @Nullable PlayerPublicKey publicKey, CallbackInfo ci) {
         PalInternals.populate(this, this.palAbilities);
     }
 

@@ -24,7 +24,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -53,13 +53,13 @@ public class AbilityToggleItem extends Item {
                 abilitySource.grantTo(sp, this.ability);  // otherwise, grant it
             }
             // Feedback message
-            user.sendMessage(new LiteralText("")
-                    .append(new LiteralText(abilitySource.getId().toString()).styled(s -> s.withColor(Formatting.YELLOW)))
-                    .append(abilitySource.grants(sp, this.ability) ? new LiteralText(" added").styled(s -> s.withColor(Formatting.GREEN)) : new LiteralText(" removed").styled(s -> s.withColor(Formatting.RED)))
+            user.sendMessage(Text.literal("")
+                    .append(Text.literal(abilitySource.getId().toString()).styled(s -> s.withColor(Formatting.YELLOW)))
+                    .append(abilitySource.grants(sp, this.ability) ? Text.literal(" added").styled(s -> s.withColor(Formatting.GREEN)) : Text.literal(" removed").styled(s -> s.withColor(Formatting.RED)))
                     .append(" (")
-                    .append(new LiteralText(this.ability.getId().toString()).styled(s -> s.withColor(Formatting.YELLOW)))
+                    .append(Text.literal(this.ability.getId().toString()).styled(s -> s.withColor(Formatting.YELLOW)))
                     .append(" is ")
-                    .append(ability.isEnabledFor(user) ? new LiteralText("enabled").styled(s -> s.withColor(Formatting.GREEN)) : new LiteralText("disabled").styled(s -> s.withColor(Formatting.RED)))
+                    .append(ability.isEnabledFor(user) ? Text.literal("enabled").styled(s -> s.withColor(Formatting.GREEN)) : Text.literal("disabled").styled(s -> s.withColor(Formatting.RED)))
                     .append(")"), false);
         }
         return TypedActionResult.success(user.getStackInHand(hand));
