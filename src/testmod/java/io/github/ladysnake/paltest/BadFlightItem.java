@@ -20,7 +20,7 @@ package io.github.ladysnake.paltest;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -47,7 +47,7 @@ public class BadFlightItem extends Item {
             user.getAbilities().allowFlying = !user.getAbilities().allowFlying;
             user.getAbilities().flying &= user.getAbilities().allowFlying;
             user.sendAbilitiesUpdate();
-            user.sendMessage(new LiteralText("Flight " + (user.getAbilities().allowFlying ? "enabled" : "disabled")), true);
+            user.sendMessage(Text.literal("Flight " + (user.getAbilities().allowFlying ? "enabled" : "disabled")), true);
         }
         return TypedActionResult.success(user.getStackInHand(hand));
     }

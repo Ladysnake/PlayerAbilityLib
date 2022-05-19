@@ -54,6 +54,6 @@ public final class PalTestSuite implements FabricGameTest {
     }
 
     private ServerPlayerEntity createMockPlayer(TestContext ctx) {
-        return new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), new GameProfile(UUID.randomUUID(), "test-mock-player"));
+        return new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), new GameProfile(UUID.randomUUID(), "test-mock-player"), null);
     }
 }
