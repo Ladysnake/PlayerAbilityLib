@@ -3,7 +3,7 @@ import net.fabricmc.loom.task.RemapJarTask
 import java.time.Year
 
 plugins {
-    id 'io.github.ladysnake.chenille' version '0.7.0'
+    id 'io.github.ladysnake.chenille' version '0.7.2'
     id 'io.github.juuxel.loom-quiltflower' version "1.6.0"
 }
 
@@ -13,6 +13,7 @@ group = project.maven_group
 
 chenille {
     configurePublishing {
+        mainArtifact = remapJar.archivePath
         withArtifactory()
         withCurseforgeRelease()
         withGithubRelease()
