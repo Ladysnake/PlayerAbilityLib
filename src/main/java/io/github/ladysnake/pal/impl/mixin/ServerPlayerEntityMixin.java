@@ -52,12 +52,13 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     @Unique
     private final Map<PlayerAbility, AbilityTracker> palAbilities = new LinkedHashMap<>();
 
-    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile, @Nullable PlayerPublicKey publicKey) {
-        super(world, pos, yaw, profile, publicKey);
+    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
+        super(world, pos, yaw, gameProfile);
     }
 
+
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, @Nullable PlayerPublicKey publicKey, CallbackInfo ci) {
+    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
         PalInternals.populate(this, this.palAbilities);
     }
 
