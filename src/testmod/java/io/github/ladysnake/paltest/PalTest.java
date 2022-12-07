@@ -28,9 +28,10 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 public final class PalTest implements ModInitializer {
 
@@ -42,14 +43,14 @@ public final class PalTest implements ModInitializer {
     public void onInitialize() {
         PalTestAbilities.init();
         this.registerWaxWings();
-        Registry.register(Registry.ITEM, id("bad_charm"), new BadFlightItem(new Item.Settings()));
-        Registry.register(Registry.ITEM, id("flight_charm"), new AbilityToggleItem(new Item.Settings(), VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
-        Registry.register(Registry.ITEM, id("kryptonite"), new AbilityToggleItem(new Item.Settings(), PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
-        Registry.register(Registry.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectCategory.BENEFICIAL, 0xFFFFFF));
+        Registry.register(Registries.ITEM, id("bad_charm"), new BadFlightItem(new Item.Settings()));
+        Registry.register(Registries.ITEM, id("flight_charm"), new AbilityToggleItem(new Item.Settings(), VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
+        Registry.register(Registries.ITEM, id("kryptonite"), new AbilityToggleItem(new Item.Settings(), PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
+        Registry.register(Registries.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectCategory.BENEFICIAL, 0xFFFFFF));
     }
 
     private void registerWaxWings() {
-        Item waxWings = Registry.register(Registry.ITEM, id("wax_wings"), new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.CHEST, new Item.Settings()));
+        Item waxWings = Registry.register(Registries.ITEM, id("wax_wings"), new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.CHEST, new Item.Settings()));
         AbilitySource source = Pal.getAbilitySource(id("wax_wings"), AbilitySource.CONSUMABLE);
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
