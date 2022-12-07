@@ -3,7 +3,8 @@ import net.fabricmc.loom.task.RemapJarTask
 import java.time.Year
 
 plugins {
-    id 'io.github.ladysnake.chenille' version '0.7.2'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'io.github.ladysnake.chenille' version '0.9.0'
     id 'io.github.juuxel.loom-quiltflower' version "1.6.0"
 }
 
@@ -13,7 +14,7 @@ group = project.maven_group
 
 chenille {
     configurePublishing {
-        mainArtifact = remapJar.archivePath
+        mainArtifact = remapJar.archiveFile
         withArtifactory()
         withCurseforgeRelease()
         withGithubRelease()
@@ -21,7 +22,6 @@ chenille {
 
     configureTestmod {
         withBaseTestRuns()
-        withDependencyConfiguration()
     }
 
     license = project.license_header
@@ -38,10 +38,8 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modTestImplementation "io.github.ladysnake:elmendorf:${elmendorf_version}"
+    modLocalImplementation "io.github.ladysnake:elmendorf:${elmendorf_version}"
     api "org.jetbrains:annotations:19.0.0"
-
-    testmodImplementation sourceSets.main.output
 }
 
 java {
