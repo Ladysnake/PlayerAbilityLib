@@ -50,7 +50,7 @@ public final class PalTest implements ModInitializer {
     }
 
     private void registerWaxWings() {
-        Item waxWings = Registry.register(Registries.ITEM, id("wax_wings"), new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.CHEST, new Item.Settings()));
+        Item waxWings = Registry.register(Registries.ITEM, id("wax_wings"), new ArmorItem(ArmorMaterials.LEATHER, ArmorItem.Type.CHESTPLATE, new Item.Settings()));
         AbilitySource source = Pal.getAbilitySource(id("wax_wings"), AbilitySource.CONSUMABLE);
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
