@@ -1,3 +1,8 @@
+## **The Ladysnake maven is moving!**
+
+**As Jfrog is ending their free service for OSS projects, we have to move the maven repository before the 1st of July 2023.
+We will be updating this page as soon as the new maven is operational - you will then have to update your buildscripts with the new URL.**
+
 # PlayerAbilityLib
 
 [![Curseforge](https://curse.nikky.moe/api/img/359522?logo)](https://www.curseforge.com/projects/359522) [![](https://jitpack.io/v/Ladysnake/PlayerAbilityLib.svg)](https://jitpack.io/#Ladysnake/PlayerAbilityLib)
