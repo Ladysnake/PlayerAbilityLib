@@ -1,10 +1,8 @@
 import net.fabricmc.loom.task.RemapJarTask
 
-import java.time.Year
-
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
-    id 'io.github.ladysnake.chenille' version '0.9.0'
+    id 'fabric-loom' version '1.3-SNAPSHOT'
+    id 'io.github.ladysnake.chenille' version '0.11.3'
     id 'io.github.juuxel.loom-quiltflower' version "1.6.0"
 }
 
@@ -15,9 +13,10 @@ group = project.maven_group
 chenille {
     configurePublishing {
         mainArtifact = remapJar.archiveFile
-        withArtifactory()
+        withLadysnakeMaven()
         withCurseforgeRelease()
         withGithubRelease()
+        withModrinthRelease()
     }
 
     configureTestmod {
@@ -54,9 +53,9 @@ processResources {
     }
 }
 
-task testmodJar(type: Jar, dependsOn: testmodClasses) {
-    archiveBaseName = 'PalTest'
-    archiveClassifier = 'dev'
+tasks.register("testmodJar", Jar) {
+    archiveBaseName.set('PalTest')
+    archiveClassifier.set('dev')
     from(sourceSets.testmod.output) {
         include 'fabric.mod.json'
         expand 'version': project.version
@@ -64,12 +63,14 @@ task testmodJar(type: Jar, dependsOn: testmodClasses) {
     from(sourceSets.testmod.output) {
         exclude 'fabric.mod.json'
     }
+    dependsOn testmodClasses
 }
 
-task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
-    archiveBaseName = 'PalTest'
+tasks.register("remapTestmodJar", RemapJarTask) {
+    archiveBaseName.set('PalTest')
     input = testmodJar.archiveFile
     addNestedDependencies = false
+    dependsOn project.testmodJar
 }
 
 build.dependsOn(remapTestmodJar)
