@@ -14,6 +14,9 @@
     "issues": "https://github.com/Ladysnake/Pal/issues",
     "discord": "ladysnake.glitch.me/discord"
   },
+  "mixins": [
+    "mixins.paltest.common.json"
+  ],
   "environment": "*",
   "entrypoints": {
     "main": [

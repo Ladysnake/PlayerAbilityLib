@@ -22,6 +22,7 @@ import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.GameTestException;
@@ -54,6 +55,6 @@ public final class PalTestSuite implements FabricGameTest {
     }
 
     private ServerPlayerEntity createMockPlayer(TestContext ctx) {
-        return new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), new GameProfile(UUID.randomUUID(), "test-mock-player"));
+        return new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), new GameProfile(UUID.randomUUID(), "test-mock-player"), SyncedClientOptions.createDefault());
     }
 }
