@@ -1,6 +1,6 @@
 /*
  * PlayerAbilityLib
- * Copyright (C) 2019-2023 Ladysnake
+ * Copyright (C) 2019-2024 Ladysnake
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,7 +58,7 @@ public final class PalTest implements ModInitializer {
                 if (chestplate.getItem() == waxWings) {
                     source.grantTo(player, VanillaAbilities.ALLOW_FLYING);
                     if (source.isActivelyGranting(player, VanillaAbilities.ALLOW_FLYING)) {
-                        chestplate.damage(1, player.getRandom(), player);
+                        chestplate.damage(1, player, EquipmentSlot.CHEST);
                     }
                 } else {
                     source.revokeFrom(player, VanillaAbilities.ALLOW_FLYING);
