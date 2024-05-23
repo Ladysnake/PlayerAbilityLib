@@ -58,7 +58,7 @@ public final class PalTest implements ModInitializer {
                 if (chestplate.getItem() == waxWings) {
                     source.grantTo(player, VanillaAbilities.ALLOW_FLYING);
                     if (source.isActivelyGranting(player, VanillaAbilities.ALLOW_FLYING)) {
-                        chestplate.damage(1, player.getRandom(), player);
+                        chestplate.damage(1, player, EquipmentSlot.CHEST);
                     }
                 } else {
                     source.revokeFrom(player, VanillaAbilities.ALLOW_FLYING);
