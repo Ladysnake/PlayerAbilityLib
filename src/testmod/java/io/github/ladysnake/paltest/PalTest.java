@@ -36,7 +36,7 @@ import net.minecraft.registry.Registry;
 public final class PalTest implements ModInitializer {
 
     public static Identifier id(String path) {
-        return new Identifier("paltest", path);
+        return Identifier.of("paltest", path);
     }
 
     @Override
