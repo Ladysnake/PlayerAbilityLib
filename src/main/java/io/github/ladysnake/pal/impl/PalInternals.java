@@ -68,7 +68,7 @@ public final class PalInternals {
     public static void loadConfig() {
         Path configFile = FabricLoader.getInstance().getConfigDir().resolve("pal.properties");
         Properties props = new Properties();
-        props.put("alwaysLogTamperWarnings", "true");
+        props.put("alwaysLogTamperWarnings", "false");
 
         if (Files.exists(configFile)) {
             try (Reader reader = Files.newBufferedReader(configFile)) {

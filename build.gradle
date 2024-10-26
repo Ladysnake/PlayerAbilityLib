@@ -1,8 +1,8 @@
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
-    id 'io.github.ladysnake.chenille' version '0.13.0'
+    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'io.github.ladysnake.chenille' version '0.14.0'
 }
 
 archivesBaseName = project.archives_base_name
@@ -27,17 +27,7 @@ chenille {
 }
 
 repositories {
-    maven {
-        name = "Ladysnake Mods"
-        url = "https://maven.ladysnake.org/releases"
-        content {
-            includeGroup("io.github.ladysnake")
-            includeGroup("org.ladysnake")
-            includeGroupByRegex("dev\\.emi.*")
-            includeGroupByRegex("dev\\.onyxstudios.*")
-        }
-    }
-
+    chenille.repositories.ladysnake()
 }
 
 dependencies {

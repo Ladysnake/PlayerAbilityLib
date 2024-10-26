@@ -18,8 +18,8 @@
 package io.github.ladysnake.pal;
 
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.world.GameMode;
 
 /**
@@ -29,7 +29,7 @@ public final class VanillaAbilities {
     /**
      * If enabled, players become invulnerable* to all damage, like in creative and spectator mode.
      *
-     * <p> Note: Damage sources that {@link DamageSource#isOutOfWorld() bypass invulnerability}
+     * <p> Note: Damage sources with {@link DamageTypeTags#BYPASSES_INVULNERABILITY}
      * can still damage players with this ability enabled.
      *
      * @see PlayerAbilities#invulnerable

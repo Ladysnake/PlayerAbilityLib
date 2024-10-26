@@ -25,13 +25,18 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.equipment.ArmorMaterials;
+import net.minecraft.item.equipment.EquipmentType;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
+
+import java.util.function.Function;
 
 public final class PalTest implements ModInitializer {
 
@@ -43,14 +48,19 @@ public final class PalTest implements ModInitializer {
     public void onInitialize() {
         PalTestAbilities.init();
         this.registerWaxWings();
-        Registry.register(Registries.ITEM, id("bad_charm"), new BadFlightItem(new Item.Settings()));
-        Registry.register(Registries.ITEM, id("flight_charm"), new AbilityToggleItem(new Item.Settings(), VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
-        Registry.register(Registries.ITEM, id("kryptonite"), new AbilityToggleItem(new Item.Settings(), PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
+        registerItem("bad_charm", BadFlightItem::new);
+        registerItem("flight_charm", settings -> new AbilityToggleItem(settings, VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
+        registerItem("kryptonite", settings -> new AbilityToggleItem(settings, PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
         Registry.register(Registries.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectCategory.BENEFICIAL, 0xFFFFFF));
     }
 
+    private <I extends Item> I registerItem(String id, Function<Item.Settings, I> factory) {
+        Identifier id1 = id(id);
+        return Registry.register(Registries.ITEM, id1, factory.apply(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, id1))));
+    }
+
     private void registerWaxWings() {
-        Item waxWings = Registry.register(Registries.ITEM, id("wax_wings"), new ArmorItem(ArmorMaterials.LEATHER, ArmorItem.Type.CHESTPLATE, new Item.Settings()));
+        Item waxWings = registerItem("wax_wings", settings -> new ArmorItem(ArmorMaterials.LEATHER, EquipmentType.CHESTPLATE, settings));
         AbilitySource source = Pal.getAbilitySource(id("wax_wings"), AbilitySource.CONSUMABLE);
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {

@@ -19,10 +19,9 @@ package io.github.ladysnake.paltest;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 /**
@@ -41,7 +40,7 @@ public class BadFlightItem extends Item {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
             // Direct ability access, issues abound !
             user.getAbilities().allowFlying = !user.getAbilities().allowFlying;
@@ -49,7 +48,7 @@ public class BadFlightItem extends Item {
             user.sendAbilitiesUpdate();
             user.sendMessage(Text.literal("Flight " + (user.getAbilities().allowFlying ? "enabled" : "disabled")), true);
         }
-        return TypedActionResult.success(user.getStackInHand(hand));
+        return ActionResult.SUCCESS;
     }
 
 }
