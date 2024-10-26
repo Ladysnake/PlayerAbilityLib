@@ -1,8 +1,3 @@
-## **The Ladysnake maven is moving!**
-
-**As Jfrog is ending their free service for OSS projects, we have to move the maven repository before the 1st of July 2023.
-See below for the new maven instructions - you will have to update your buildscripts with the new URL before the cutoff date to avoid dependency resolution failures.**
-
 # PlayerAbilityLib
 
 [![Curseforge](https://curse.nikky.moe/api/img/359522?logo)](https://www.curseforge.com/projects/359522) [![](https://jitpack.io/v/Ladysnake/PlayerAbilityLib.svg)](https://jitpack.io/#Ladysnake/PlayerAbilityLib)
@@ -27,7 +22,7 @@ repositories {
         url = 'https://maven.ladysnake.org/releases'
         content {
             includeGroup 'io.github.ladysnake'
-            includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+            includeGroupByRegex 'org\\.ladysnake.*'
         }
     }
 }
@@ -62,7 +57,7 @@ you should take a look at [Cardinal Components API](https://github.com/OnyxStudi
 public static final AbilitySource FLIGHT_CHARM = Pal.getAbilitySource("mymod", "flight_charm");  // works like an identifier
 
 @Override
-public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+public ActionResult use(World world, PlayerEntity user, Hand hand) {
     if (!world.isClient) {
         if (FLIGHT_CHARM.grants(user, VanillaAbilities.ALLOW_FLYING)) { // check whether the source is granting the ability
             FLIGHT_CHARM.revokeFrom(user, VanillaAbilities.ALLOW_FLYING); // if it is, revoke it
@@ -70,7 +65,7 @@ public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand han
             FLIGHT_CHARM.grantTo(user, VanillaAbilities.ALLOW_FLYING);  // otherwise, grant it
         }
     }
-    return TypedActionResult.success(user.getStackInHand(hand));
+    return ActionResult.SUCCESS;
 }
 ```
 
@@ -86,11 +81,12 @@ public void onApplied(LivingEntity effected, AbstractEntityAttributeContainer at
     }
 }
 
-@Override
-public void onRemoved(LivingEntity effected, AbstractEntityAttributeContainer attributes, int amplifier) {
+public void onRemoved(LivingEntity effected) {
     if (effected instanceof PlayerEntity) {
         Pal.revokeAbility((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING, FLIGHT_POTION);
         // equivalent to: FLIGHT_POTION.revokeFrom((PlayerEntity) effected, VanillaAbilities.ALLOW_FLYING);
     }
 }
 ```
+Note that the `onRemoved` method needs a mixin to work, as the vanilla `StatusEffect#onRemoved` method does not get a `LivingEntity` parameter.
+You can find an example of such a mixin [here](https://github.com/Ladysnake/PlayerAbilityLib/blob/master/src/testmod/java/io/github/ladysnake/paltest/mixin/LivingEntityMixin.java)
