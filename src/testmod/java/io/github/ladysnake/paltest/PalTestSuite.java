@@ -21,20 +21,20 @@ import com.mojang.authlib.GameProfile;
 import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.test.GameTest;
 import net.minecraft.test.GameTestException;
 import net.minecraft.test.TestContext;
+import net.minecraft.text.Text;
 
 import java.util.UUID;
 
-public final class PalTestSuite implements FabricGameTest {
+public final class PalTestSuite {
     private static final AbilitySource TEST_SOURCE = Pal.getAbilitySource(PalTest.id("test_source"));
     private static final AbilitySource TEST_SOURCE_2 = Pal.getAbilitySource(PalTest.id("test_source_2"));
 
-    @GameTest(templateName = EMPTY_STRUCTURE)
+    @GameTest()
     public void grantingWorks(TestContext ctx) {
         ServerPlayerEntity mockPlayer = createMockPlayer(ctx);
         assertTrue(mockPlayer.getAbilities().allowModifyWorld, "Unexpected init state");
@@ -51,7 +51,7 @@ public final class PalTestSuite implements FabricGameTest {
     }
 
     private static void assertTrue(boolean b, String message) {
-        if (!b) throw new GameTestException(message);
+        if (!b) throw new GameTestException(Text.literal(message), 0);
     }
 
     private ServerPlayerEntity createMockPlayer(TestContext ctx) {

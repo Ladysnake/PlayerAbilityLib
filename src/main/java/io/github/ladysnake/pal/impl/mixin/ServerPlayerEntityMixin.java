@@ -120,15 +120,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER)
     )
     private void readAbilitiesFromTag(NbtCompound tag, CallbackInfo ci) {
-        for (NbtElement t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
-            NbtCompound abilityTag = ((NbtCompound) t);
-            if (abilityTag.contains("ability_id", NbtElement.STRING_TYPE)) {
-                String abilityId = abilityTag.getString("ability_id");
-                AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
-                if (tracker != null) {
-                    tracker.load(abilityTag);
-                } else {
-                    PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
+        for (NbtElement t : tag.getListOrEmpty("playerabilitylib:abilities")) {
+            if (t instanceof NbtCompound abilityTag) {
+                if (abilityTag.contains("ability_id")) {
+                    String abilityId = abilityTag.getString("ability_id", "");
+                    AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
+                    if (tracker != null) {
+                        tracker.load(abilityTag);
+                    } else {
+                        PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
+                    }
                 }
             }
         }

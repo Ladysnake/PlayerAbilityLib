@@ -115,9 +115,9 @@ public class SimpleAbilityTracker implements AbilityTracker {
 
     @Override
     public void load(NbtCompound tag) {
-        NbtList list = tag.getList("ability_sources", NbtType.STRING);
+        NbtList list = tag.getListOrEmpty("ability_sources");
         for (int i = 0; i < list.size(); i++) {
-            AbilitySource source = PalInternals.getSource(Identifier.tryParse(list.getString(i)));
+            AbilitySource source = list.getString(i).map(x -> PalInternals.getSource(Identifier.tryParse(x))).orElse(null);
             if (source != null) {
                 this.addSource(source);
             } else {
