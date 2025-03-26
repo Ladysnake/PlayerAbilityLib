@@ -1,6 +1,6 @@
 /*
  * PlayerAbilityLib
- * Copyright (C) 2019-2024 Ladysnake
+ * Copyright (C) 2019-2025 Ladysnake
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import io.github.ladysnake.pal.VanillaAbilities;
 import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -120,15 +119,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER)
     )
     private void readAbilitiesFromTag(NbtCompound tag, CallbackInfo ci) {
-        for (NbtElement t : tag.getList("playerabilitylib:abilities", NbtType.COMPOUND)) {
-            NbtCompound abilityTag = ((NbtCompound) t);
-            if (abilityTag.contains("ability_id", NbtElement.STRING_TYPE)) {
-                String abilityId = abilityTag.getString("ability_id");
-                AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
-                if (tracker != null) {
-                    tracker.load(abilityTag);
-                } else {
-                    PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
+        for (NbtElement t : tag.getListOrEmpty("playerabilitylib:abilities")) {
+            if (t instanceof NbtCompound abilityTag) {
+                if (abilityTag.contains("ability_id")) {
+                    String abilityId = abilityTag.getString("ability_id", "");
+                    AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
+                    if (tracker != null) {
+                        tracker.load(abilityTag);
+                    } else {
+                        PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
+                    }
                 }
             }
         }

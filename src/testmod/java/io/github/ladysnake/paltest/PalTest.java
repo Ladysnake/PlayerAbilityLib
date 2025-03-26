@@ -1,6 +1,6 @@
 /*
  * PlayerAbilityLib
- * Copyright (C) 2019-2024 Ladysnake
+ * Copyright (C) 2019-2025 Ladysnake
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.equipment.ArmorMaterials;
@@ -60,7 +59,7 @@ public final class PalTest implements ModInitializer {
     }
 
     private void registerWaxWings() {
-        Item waxWings = registerItem("wax_wings", settings -> new ArmorItem(ArmorMaterials.LEATHER, EquipmentType.CHESTPLATE, settings));
+        Item waxWings = registerItem("wax_wings", settings -> new Item(settings.armor(ArmorMaterials.LEATHER, EquipmentType.CHESTPLATE)));
         AbilitySource source = Pal.getAbilitySource(id("wax_wings"), AbilitySource.CONSUMABLE);
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {

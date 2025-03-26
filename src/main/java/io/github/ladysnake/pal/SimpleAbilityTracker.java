@@ -1,6 +1,6 @@
 /*
  * PlayerAbilityLib
- * Copyright (C) 2019-2024 Ladysnake
+ * Copyright (C) 2019-2025 Ladysnake
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ package io.github.ladysnake.pal;
 
 import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -115,9 +114,9 @@ public class SimpleAbilityTracker implements AbilityTracker {
 
     @Override
     public void load(NbtCompound tag) {
-        NbtList list = tag.getList("ability_sources", NbtType.STRING);
+        NbtList list = tag.getListOrEmpty("ability_sources");
         for (int i = 0; i < list.size(); i++) {
-            AbilitySource source = PalInternals.getSource(Identifier.tryParse(list.getString(i)));
+            AbilitySource source = list.getString(i).map(x -> PalInternals.getSource(Identifier.tryParse(x))).orElse(null);
             if (source != null) {
                 this.addSource(source);
             } else {
