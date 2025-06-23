@@ -17,12 +17,12 @@
  */
 package io.github.ladysnake.pal;
 
+import com.mojang.serialization.Codec;
 import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 
 import java.util.SortedSet;
@@ -104,23 +104,22 @@ public class SimpleAbilityTracker implements AbilityTracker {
     }
 
     @Override
-    public void save(NbtCompound tag) {
-        NbtList list = new NbtList();
+    public void save(WriteView view) {
+        var list = view.getListAppender("ability_sources", Codec.STRING);
         for (AbilitySource abilitySource : this.abilitySources) {
-            list.add(NbtString.of(abilitySource.getId().toString()));
+            list.add(abilitySource.getId().toString());
         }
-        tag.put("ability_sources", list);
     }
 
     @Override
-    public void load(NbtCompound tag) {
-        NbtList list = tag.getListOrEmpty("ability_sources");
-        for (int i = 0; i < list.size(); i++) {
-            AbilitySource source = list.getString(i).map(x -> PalInternals.getSource(Identifier.tryParse(x))).orElse(null);
+    public void load(ReadView view) {
+        var list = view.getTypedListView("ability_sources", Codec.STRING);
+        for (var string : list) {
+            AbilitySource source = PalInternals.getSource(Identifier.tryParse(string));
             if (source != null) {
                 this.addSource(source);
             } else {
-                PalInternals.LOGGER.warn("Unknown ability source {} attached to {} for {}", list.getString(i), this.player, this.ability);
+                PalInternals.LOGGER.warn("Unknown ability source {} attached to {} for {}", string, this.player, this.ability);
             }
         }
     }

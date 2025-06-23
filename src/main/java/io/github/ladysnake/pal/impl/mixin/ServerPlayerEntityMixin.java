@@ -32,8 +32,12 @@ import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -50,8 +54,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     @Unique
     private final Map<PlayerAbility, AbilityTracker> palAbilities = new LinkedHashMap<>();
 
-    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+    public ServerPlayerEntityMixin(World world, GameProfile gameProfile) {
+        super(world, gameProfile);
     }
 
 
@@ -85,10 +89,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
     @Inject(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V", shift = At.Shift.AFTER))
     private void copyAbilitiesAfterRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
         if (alive) {
-            NbtCompound nbt = new NbtCompound();
+            var writeView = NbtWriteView.create(ErrorReporter.EMPTY, oldPlayer.getRegistryManager());
             //noinspection ConstantConditions
-            ((ServerPlayerEntityMixin) (Object) oldPlayer).writeAbilitiesToTag(nbt, null);
-            this.readAbilitiesFromTag(nbt, null);
+            ((ServerPlayerEntityMixin) (Object) oldPlayer).writeAbilitiesToData(writeView, null);
+            this.readAbilitiesFromData(NbtReadView.create(ErrorReporter.EMPTY, oldPlayer.getRegistryManager(), writeView.getNbt()), null);
         }
     }
 
@@ -102,33 +106,29 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         }
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
-    private void writeAbilitiesToTag(NbtCompound tag, CallbackInfo ci) {
-        NbtList list = new NbtList();
+    @Inject(method = "writeCustomData", at = @At("RETURN"))
+    private void writeAbilitiesToData(WriteView view, CallbackInfo ci) {
+        var list = view.getList("playerabilitylib:abilities");
         for (Map.Entry<PlayerAbility, AbilityTracker> entry : this.palAbilities.entrySet()) {
-            NbtCompound abilityTag = new NbtCompound();
+            var abilityTag = list.add();
             abilityTag.putString("ability_id", entry.getKey().getId().toString());
             entry.getValue().save(abilityTag);
-            list.add(abilityTag);
         }
-        tag.put("playerabilitylib:abilities", list);
     }
 
     @Inject(
-        method = "readCustomDataFromNbt",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", shift = At.Shift.AFTER)
+        method = "readCustomData",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomData(Lnet/minecraft/storage/ReadView;)V", shift = At.Shift.AFTER)
     )
-    private void readAbilitiesFromTag(NbtCompound tag, CallbackInfo ci) {
-        for (NbtElement t : tag.getListOrEmpty("playerabilitylib:abilities")) {
-            if (t instanceof NbtCompound abilityTag) {
-                if (abilityTag.contains("ability_id")) {
-                    String abilityId = abilityTag.getString("ability_id", "");
-                    AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
-                    if (tracker != null) {
-                        tracker.load(abilityTag);
-                    } else {
-                        PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
-                    }
+    private void readAbilitiesFromData(ReadView view, CallbackInfo ci) {
+        for (var abilityTag : view.getListReadView("playerabilitylib:abilities")) {
+            String abilityId = abilityTag.getString("ability_id", "");
+            if (!abilityId.isEmpty()) {
+                AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
+                if (tracker != null) {
+                    tracker.load(abilityTag);
+                } else {
+                    PalInternals.LOGGER.warn("Encountered unknown ability {} while deserializing data for {}", abilityId, this);
                 }
             }
         }

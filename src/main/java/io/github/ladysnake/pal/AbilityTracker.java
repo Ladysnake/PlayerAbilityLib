@@ -18,7 +18,8 @@
 package io.github.ladysnake.pal;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -104,16 +105,16 @@ public interface AbilityTracker {
     /**
      * Saves this {@code AbilityTracker} in a serialized form to {@code tag}.
      *
-     * @param tag the tag to write to
+     * @param view the view to read from
      */
     @Contract(mutates = "param")
-    void save(NbtCompound tag);
+    void save(WriteView view);
 
     /**
      * Loads a serialized form of an {@code AbilityTracker} from {@code tag} into this object.
      *
-     * @param tag the tag to read from
+     * @param view the view to write to
      */
     @Contract(mutates = "this")
-    void load(NbtCompound tag);
+    void load(ReadView view);
 }
