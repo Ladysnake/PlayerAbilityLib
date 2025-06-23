@@ -1,4 +1,11 @@
 ------------------------------------------------------
+Version 1.14.0
+------------------------------------------------------
+Turns out we skipped a version number, hopefully nobody will notice
+
+- Updated to MC 1.21.6 (thanks as always to Patbox)
+
+------------------------------------------------------
 Version 1.12.0
 ------------------------------------------------------
 - Updated to MC 1.21.5 (thanks again Patbox !)
