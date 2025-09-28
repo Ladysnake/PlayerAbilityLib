@@ -41,7 +41,7 @@ public class BadFlightItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             // Direct ability access, issues abound !
             user.getAbilities().allowFlying = !user.getAbilities().allowFlying;
             user.getAbilities().flying &= user.getAbilities().allowFlying;
