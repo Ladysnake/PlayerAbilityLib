@@ -33,5 +33,6 @@ public class LivingEntityMixin {
         if (effect instanceof FlightEffect flightEffect) {
             flightEffect.onRemoved((LivingEntity) (Object) this);
         }
+        original.call(effect, attributeContainer);
     }
 }
