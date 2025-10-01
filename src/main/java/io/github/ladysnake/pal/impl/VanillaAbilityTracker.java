@@ -73,8 +73,8 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
     }
 
     private static GameMode getGamemode(PlayerEntity player) {
-        if (player.getWorld().isClient) {
-            PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getGameProfile().getId());
+        if (player.getEntityWorld().isClient()) {
+            PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getGameProfile().id());
             return playerListEntry != null ? playerListEntry.getGameMode() : GameMode.SURVIVAL;
         } else {
             return ((ServerPlayerEntity) player).interactionManager.getGameMode();
