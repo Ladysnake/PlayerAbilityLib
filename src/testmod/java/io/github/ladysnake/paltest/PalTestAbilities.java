@@ -1,6 +1,6 @@
 /*
  * PlayerAbilityLib
- * Copyright (C) 2019-2025 Ladysnake
+ * Copyright (C) 2019-2026 Ladysnake
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,12 @@
  */
 package io.github.ladysnake.paltest;
 
-import io.github.ladysnake.pal.*;
+import io.github.ladysnake.pal.Pal;
+import io.github.ladysnake.pal.PlayerAbility;
+import io.github.ladysnake.pal.PlayerAbilityEnableCallback;
+import io.github.ladysnake.pal.PlayerAbilityUpdatedCallback;
+import io.github.ladysnake.pal.SimpleAbilityTracker;
+import io.github.ladysnake.pal.VanillaAbilities;
 
 /**
  * Custom abilities
