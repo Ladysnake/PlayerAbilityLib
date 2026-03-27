@@ -52,14 +52,14 @@ public class AbilityToggleItem extends Item {
                 abilitySource.grantTo(sp, this.ability);  // otherwise, grant it
             }
             // Feedback message
-            user.displayClientMessage(Component.literal("")
+            user.sendSystemMessage(Component.literal("")
                     .append(Component.literal(abilitySource.getId().toString()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)))
                     .append(abilitySource.grants(sp, this.ability) ? Component.literal(" added").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal(" removed").withStyle(s -> s.withColor(ChatFormatting.RED)))
                     .append(" (")
                     .append(Component.literal(this.ability.getId().toString()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)))
                     .append(" is ")
                     .append(ability.isEnabledFor(user) ? Component.literal("enabled").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("disabled").withStyle(s -> s.withColor(ChatFormatting.RED)))
-                    .append(")"), false);
+                    .append(")"));
         }
         return InteractionResult.SUCCESS;
     }

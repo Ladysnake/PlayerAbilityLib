@@ -1,17 +1,13 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
-    id 'fabric-loom' version '1.11-SNAPSHOT'
-    id 'io.github.ladysnake.chenille' version '0.14.0'
+    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+    id 'io.github.ladysnake.chenille' version '0.18.0'
 }
 
-archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
 chenille {
     configurePublishing {
-        mainArtifact = remapJar.archiveFile
         withLadysnakeMaven()
         withCurseforgeRelease()
         withGithubRelease()
@@ -23,7 +19,7 @@ chenille {
     }
 
     license = project.license_header
-    javaVersion = 21
+    javaVersion = 25
 }
 
 repositories {
@@ -33,10 +29,9 @@ repositories {
 dependencies {
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modLocalImplementation "org.ladysnake:elmendorf:${elmendorf_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    localImplementation "org.ladysnake:elmendorf:${elmendorf_version}"
     api "org.jetbrains:annotations:19.0.0"
 }
 
@@ -54,7 +49,6 @@ processResources {
 
 tasks.register("testmodJar", Jar) {
     archiveBaseName.set('PalTest')
-    archiveClassifier.set('dev')
     from(sourceSets.testmod.output) {
         include 'fabric.mod.json'
         expand 'version': project.version
@@ -65,11 +59,4 @@ tasks.register("testmodJar", Jar) {
     dependsOn testmodClasses
 }
 
-tasks.register("remapTestmodJar", RemapJarTask) {
-    archiveBaseName.set('PalTest')
-    input = testmodJar.archiveFile
-    addNestedDependencies = false
-    dependsOn project.testmodJar
-}
-
-build.dependsOn(remapTestmodJar)
+build.dependsOn(testmodJar)

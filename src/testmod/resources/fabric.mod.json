@@ -27,6 +27,6 @@
     ]
   },
   "depends": {
-    "fabric": "*"
+    "fabric-api": "*"
   }
 }

@@ -115,7 +115,7 @@ public abstract class ServerPlayerMixin extends Player implements PlayerAbilityV
 
     @Inject(
         method = "readAdditionalSaveData",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;readCustomData(Lnet/minecraft/world/level/storage/ValueInput;)V", shift = At.Shift.AFTER)
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;readAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueInput;)V", shift = At.Shift.AFTER)
     )
     private void readAbilitiesFromData(ValueInput view, CallbackInfo ci) {
         for (var abilityTag : view.childrenListOrEmpty("playerabilitylib:abilities")) {

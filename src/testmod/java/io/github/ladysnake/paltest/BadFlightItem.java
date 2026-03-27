@@ -46,7 +46,7 @@ public class BadFlightItem extends Item {
             user.getAbilities().mayfly = !user.getAbilities().mayfly;
             user.getAbilities().flying &= user.getAbilities().mayfly;
             user.onUpdateAbilities();
-            user.displayClientMessage(Component.literal("Flight " + (user.getAbilities().mayfly ? "enabled" : "disabled")), true);
+            user.sendOverlayMessage(Component.literal("Flight " + (user.getAbilities().mayfly ? "enabled" : "disabled")));
         }
         return InteractionResult.SUCCESS;
     }
