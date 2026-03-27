@@ -21,9 +21,9 @@ import io.github.ladysnake.pal.AbilityTracker;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.PlayerAbility;
 import io.github.ladysnake.pal.VanillaAbilities;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.function.BiFunction;
 
@@ -41,8 +41,8 @@ public interface PlayerAbilityView {
      * @param player an initialized player to get the abilities of
      * @return a view for the player's abilities
      */
-    static PlayerAbilityView of(PlayerEntity player) {
-        if (player.getEntityWorld().isClient()) {
+    static PlayerAbilityView of(Player player) {
+        if (player.level().isClientSide()) {
             throw new IllegalStateException("Player abilities must be accessed from the logical server (check !world.isClient)");
         }
         return (PlayerAbilityView) player;
@@ -64,7 +64,7 @@ public interface PlayerAbilityView {
     /**
      * Refreshes each ability of this player.
      *
-     * @param syncVanilla {@code true} if vanilla {@link PlayerAbilities} should be synchronized as a result of this call
+     * @param syncVanilla {@code true} if vanilla {@link Abilities} should be synchronized as a result of this call
      * @see AbilityTracker#refresh(boolean)
      */
     void refreshAllPalAbilities(boolean syncVanilla);

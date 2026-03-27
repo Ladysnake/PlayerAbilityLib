@@ -22,25 +22,25 @@ import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.equipment.ArmorMaterials;
-import net.minecraft.item.equipment.EquipmentType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.ArmorMaterials;
+import net.minecraft.world.item.equipment.ArmorType;
 
 import java.util.function.Function;
 
 public final class PalTest implements ModInitializer {
 
     public static Identifier id(String path) {
-        return Identifier.of("paltest", path);
+        return Identifier.fromNamespaceAndPath("paltest", path);
     }
 
     @Override
@@ -50,24 +50,24 @@ public final class PalTest implements ModInitializer {
         registerItem("bad_charm", BadFlightItem::new);
         registerItem("flight_charm", settings -> new AbilityToggleItem(settings, VanillaAbilities.ALLOW_FLYING, id("charm_flight")));
         registerItem("kryptonite", settings -> new AbilityToggleItem(settings, PalTestAbilities.LIMIT_FLIGHT, id("kryptonite")));
-        Registry.register(Registries.STATUS_EFFECT, id("flight"), new FlightEffect(StatusEffectCategory.BENEFICIAL, 0xFFFFFF));
+        Registry.register(BuiltInRegistries.MOB_EFFECT, id("flight"), new FlightEffect(MobEffectCategory.BENEFICIAL, 0xFFFFFF));
     }
 
-    private <I extends Item> I registerItem(String id, Function<Item.Settings, I> factory) {
+    private <I extends Item> I registerItem(String id, Function<Item.Properties, I> factory) {
         Identifier id1 = id(id);
-        return Registry.register(Registries.ITEM, id1, factory.apply(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, id1))));
+        return Registry.register(BuiltInRegistries.ITEM, id1, factory.apply(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id1))));
     }
 
     private void registerWaxWings() {
-        Item waxWings = registerItem("wax_wings", settings -> new Item(settings.armor(ArmorMaterials.LEATHER, EquipmentType.CHESTPLATE)));
+        Item waxWings = registerItem("wax_wings", settings -> new Item(settings.humanoidArmor(ArmorMaterials.LEATHER, ArmorType.CHESTPLATE)));
         AbilitySource source = Pal.getAbilitySource(id("wax_wings"), AbilitySource.CONSUMABLE);
         ServerTickEvents.START_SERVER_TICK.register(server -> {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                ItemStack chestplate = player.getEquippedStack(EquipmentSlot.CHEST);
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
                 if (chestplate.getItem() == waxWings) {
                     source.grantTo(player, VanillaAbilities.ALLOW_FLYING);
                     if (source.isActivelyGranting(player, VanillaAbilities.ALLOW_FLYING)) {
-                        chestplate.damage(1, player, EquipmentSlot.CHEST);
+                        chestplate.hurtAndBreak(1, player, EquipmentSlot.CHEST);
                     }
                 } else {
                     source.revokeFrom(player, VanillaAbilities.ALLOW_FLYING);

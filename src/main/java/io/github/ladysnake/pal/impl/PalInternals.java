@@ -25,8 +25,8 @@ import io.github.ladysnake.pal.PlayerAbilityUpdatedCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
@@ -51,7 +51,7 @@ public final class PalInternals {
     private static final Map<Identifier, PlayerAbility> abilities = new HashMap<>();
     private static final Map<Identifier, AbilitySource> sources = new HashMap<>();
 
-    public static void populate(PlayerEntity player, Map<PlayerAbility, AbilityTracker> map) {
+    public static void populate(Player player, Map<PlayerAbility, AbilityTracker> map) {
         for (PlayerAbility ability : abilities.values()) {
             map.put(ability, ability.createTracker(player));
         }

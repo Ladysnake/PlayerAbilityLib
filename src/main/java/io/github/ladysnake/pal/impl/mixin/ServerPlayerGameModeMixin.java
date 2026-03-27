@@ -18,9 +18,9 @@
 package io.github.ladysnake.pal.impl.mixin;
 
 import io.github.ladysnake.pal.impl.PlayerAbilityView;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
-import net.minecraft.world.GameMode;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,33 +31,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.spongepowered.asm.mixin.injection.At.Shift.AFTER;
 
-@Mixin(ServerPlayerInteractionManager.class)
-public abstract class ServerPlayerInteractionManagerMixin {
+@Mixin(ServerPlayerGameMode.class)
+public abstract class ServerPlayerGameModeMixin {
     @Unique
     private static final ThreadLocal<Boolean> PAL_FLYING = new ThreadLocal<>();
 
     @Final
     @Shadow
-    protected ServerPlayerEntity player;
+    protected ServerPlayer player;
 
     @Inject(
-            method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
+            method = "setGameModeForPlayer(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V"
+                    target = "Lnet/minecraft/world/level/GameType;updatePlayerAbilities(Lnet/minecraft/world/entity/player/Abilities;)V"
             ))
-    private void saveFlying(GameMode newMode, GameMode previousMode, CallbackInfo info) {
+    private void saveFlying(GameType newMode, GameType previousMode, CallbackInfo info) {
         PAL_FLYING.set(player.getAbilities().flying);
     }
 
     @Inject(
-            method = "setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
+            method = "setGameModeForPlayer(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/GameMode;setAbilities(Lnet/minecraft/entity/player/PlayerAbilities;)V",
+                    target = "Lnet/minecraft/world/level/GameType;updatePlayerAbilities(Lnet/minecraft/world/entity/player/Abilities;)V",
                     shift = AFTER
             ))
-    private void keepAbilities(GameMode newMode, GameMode previousMode, CallbackInfo info) {
+    private void keepAbilities(GameType newMode, GameType previousMode, CallbackInfo info) {
         player.getAbilities().flying = PAL_FLYING.get(); // will be overruled if unworthy
         PlayerAbilityView.of(this.player).refreshAllPalAbilities(false);
     }

@@ -17,8 +17,8 @@
  */
 package io.github.ladysnake.pal;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -93,7 +93,7 @@ public final class AbilitySource implements Comparable<AbilitySource> {
      * @param player  the player on which to enable the ability
      * @param ability the ability to enable
      */
-    public void grantTo(PlayerEntity player, PlayerAbility ability) {
+    public void grantTo(Player player, PlayerAbility ability) {
         ability.getTracker(player).addSource(this);
     }
 
@@ -106,7 +106,7 @@ public final class AbilitySource implements Comparable<AbilitySource> {
      * @param player  the player to revoke the ability from
      * @param ability the ability to revoke
      */
-    public void revokeFrom(PlayerEntity player, PlayerAbility ability) {
+    public void revokeFrom(Player player, PlayerAbility ability) {
         ability.getTracker(player).removeSource(this);
     }
 
@@ -118,7 +118,7 @@ public final class AbilitySource implements Comparable<AbilitySource> {
      * @param ability an ability that may be granted by this source
      * @return {@code true} if this grants {@code player} the {@code ability}
      */
-    public boolean grants(PlayerEntity player, PlayerAbility ability) {
+    public boolean grants(Player player, PlayerAbility ability) {
         return ability.getTracker(player).isGrantedBy(this);
     }
 
@@ -140,7 +140,7 @@ public final class AbilitySource implements Comparable<AbilitySource> {
      * to {@code player}, {@code false} otherwise.
      * @since 1.4.0
      */
-    public boolean isActivelyGranting(PlayerEntity player, PlayerAbility ability) {
+    public boolean isActivelyGranting(Player player, PlayerAbility ability) {
         return ability.getTracker(player).getActiveSource() == this;
     }
 

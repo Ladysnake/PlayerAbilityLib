@@ -19,7 +19,7 @@ package io.github.ladysnake.pal;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Callback interface for receiving ability enabling events.
@@ -43,7 +43,7 @@ public interface PlayerAbilityEnableCallback {
      *
      * <p> The callback may return {@code false} to reject the activation,
      * keeping the ability in its previous activation state.
-     * Some abilities may stay {@linkplain PlayerAbility#isEnabledFor(PlayerEntity) enabled}
+     * Some abilities may stay {@linkplain PlayerAbility#isEnabledFor(Player) enabled}
      * despite all sources of activation being rejected, because of intrinsic providers like the player's gamemode.
      *
      * @param player        the affected player
@@ -52,5 +52,5 @@ public interface PlayerAbilityEnableCallback {
      * @return {@code true} to let {@code abilitySource} enable the ability on {@code player},
      * and {@code false} to prevent the ability from being enabled.
      */
-    boolean allow(PlayerEntity player, PlayerAbility ability, AbilitySource abilitySource);
+    boolean allow(Player player, PlayerAbility ability, AbilitySource abilitySource);
 }

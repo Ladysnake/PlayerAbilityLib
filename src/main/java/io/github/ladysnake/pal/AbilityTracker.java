@@ -17,10 +17,10 @@
  */
 package io.github.ladysnake.pal;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +74,7 @@ public interface AbilityTracker {
      *
      * @return the active source, or {@code null} if no source is granting the ability
      * @see Pal#getAbilitySource(Identifier, int)
-     * @see AbilitySource#isActivelyGranting(PlayerEntity, PlayerAbility)
+     * @see AbilitySource#isActivelyGranting(Player, PlayerAbility)
      * @see AbilitySource#compareTo(AbilitySource)
      * @since 1.4.0
      */
@@ -108,7 +108,7 @@ public interface AbilityTracker {
      * @param view the view to read from
      */
     @Contract(mutates = "param")
-    void save(WriteView view);
+    void save(ValueOutput view);
 
     /**
      * Loads a serialized form of an {@code AbilityTracker} from {@code tag} into this object.
@@ -116,5 +116,5 @@ public interface AbilityTracker {
      * @param view the view to write to
      */
     @Contract(mutates = "this")
-    void load(ReadView view);
+    void load(ValueInput view);
 }

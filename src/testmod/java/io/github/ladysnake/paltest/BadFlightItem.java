@@ -17,12 +17,12 @@
  */
 package io.github.ladysnake.paltest;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 
 /**
  * An item that toggles flight without going through PAL.
@@ -35,20 +35,20 @@ import net.minecraft.world.World;
  * @see AbilityToggleItem
  */
 public class BadFlightItem extends Item {
-    public BadFlightItem(Settings settings) {
+    public BadFlightItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (!world.isClient()) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        if (!world.isClientSide()) {
             // Direct ability access, issues abound !
-            user.getAbilities().allowFlying = !user.getAbilities().allowFlying;
-            user.getAbilities().flying &= user.getAbilities().allowFlying;
-            user.sendAbilitiesUpdate();
-            user.sendMessage(Text.literal("Flight " + (user.getAbilities().allowFlying ? "enabled" : "disabled")), true);
+            user.getAbilities().mayfly = !user.getAbilities().mayfly;
+            user.getAbilities().flying &= user.getAbilities().mayfly;
+            user.onUpdateAbilities();
+            user.displayClientMessage(Component.literal("Flight " + (user.getAbilities().mayfly ? "enabled" : "disabled")), true);
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
 }

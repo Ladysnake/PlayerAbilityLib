@@ -18,12 +18,12 @@
 package io.github.ladysnake.pal;
 
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.world.GameMode;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.level.GameType;
 
 /**
- * Ability identifiers for vanilla {@link PlayerAbilities}
+ * Ability identifiers for vanilla {@link Abilities}
  */
 public final class VanillaAbilities {
     /**
@@ -32,10 +32,10 @@ public final class VanillaAbilities {
      * <p> Note: Damage sources with {@link DamageTypeTags#BYPASSES_INVULNERABILITY}
      * can still damage players with this ability enabled.
      *
-     * @see PlayerAbilities#invulnerable
+     * @see Abilities#invulnerable
      */
     public static final PlayerAbility INVULNERABLE = Pal.registerAbility("minecraft", "invulnerable",
-        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.invulnerable = e || !g.isSurvivalLike(), a -> a.invulnerable));
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.invulnerable = e || !g.isSurvival(), a -> a.invulnerable));
 
     /**
      * If enabled and {@link #ALLOW_FLYING} is enabled, players become able to move in any direction in the air,
@@ -46,10 +46,10 @@ public final class VanillaAbilities {
      * However, in multiplayer, if a player is not allowed to fly from the server's perspective, it will be kicked
      * as soon as it actually starts flying.
      *
-     * @see PlayerAbilities#flying
+     * @see Abilities#flying
      */
     public static final PlayerAbility FLYING = Pal.registerAbility("minecraft", "flying",
-        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.flying = e || g == GameMode.SPECTATOR, a -> a.flying));
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.flying = e || g == GameType.SPECTATOR, a -> a.flying));
 
     /**
      * If enabled, players become able to double tap space to fly, like in creative mode.
@@ -57,32 +57,32 @@ public final class VanillaAbilities {
      * <p> Enabling this ability is the easiest way to prevent servers kicking players for modded
      * forms of flight.
      *
-     * @see PlayerAbilities#allowFlying
+     * @see Abilities#mayfly
      */
     public static final PlayerAbility ALLOW_FLYING = Pal.registerAbility("minecraft", "mayfly",
         (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> {
-            a.allowFlying = e || !g.isSurvivalLike();
-            a.flying &= a.allowFlying;
-        }, a -> a.allowFlying));
+            a.mayfly = e || !g.isSurvival();
+            a.flying &= a.mayfly;
+        }, a -> a.mayfly));
 
     /**
      * If enabled, players stop consuming items and experience, and start dealing creative damage.
      *
-     * @see PlayerAbilities#creativeMode
+     * @see Abilities#instabuild
      */
     public static final PlayerAbility CREATIVE_MODE = Pal.registerAbility("minecraft", "instabuild",
-        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.creativeMode = e || g.isCreative(), a -> a.creativeMode));
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.instabuild = e || g.isCreative(), a -> a.instabuild));
 
     /**
      * If enabled, players will be denied world modifications as if they were in adventure or spectator mode.
      *
-     * <p> Since players can modify the world by default, this ability is inverted from {@link PlayerAbilities#allowModifyWorld}
+     * <p> Since players can modify the world by default, this ability is inverted from {@link Abilities#mayBuild}
      * to let mods deny world modifications to players in survival mode.
      *
-     * @see PlayerAbilities#allowModifyWorld
+     * @see Abilities#mayBuild
      */
     public static final PlayerAbility LIMIT_WORLD_MODIFICATIONS = Pal.registerAbility("minecraft", "maynotbuild",
-        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.allowModifyWorld = (!e && !g.isBlockBreakingRestricted()), a -> !a.allowModifyWorld));
+        (ability, player) -> new VanillaAbilityTracker(ability, player, (g, a, e) -> a.mayBuild = (!e && !g.isBlockPlacingRestricted()), a -> !a.mayBuild));
 
     VanillaAbilities() { }
 }

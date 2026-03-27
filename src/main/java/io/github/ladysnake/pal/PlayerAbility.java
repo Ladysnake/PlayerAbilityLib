@@ -20,8 +20,8 @@ package io.github.ladysnake.pal;
 import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -45,7 +45,7 @@ import java.util.function.BiFunction;
 public final class PlayerAbility {
     @ApiStatus.Internal
     final Event<PlayerAbilityUpdatedCallback> updateEvent = PalInternals.createUpdateEvent();
-    private final BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> trackerFactory;
+    private final BiFunction<PlayerAbility, Player, AbilityTracker> trackerFactory;
     private final Identifier id;
 
     /**
@@ -53,7 +53,7 @@ public final class PlayerAbility {
      * @see Pal#registerAbility(Identifier, BiFunction)
      */
     @ApiStatus.Internal
-    PlayerAbility(Identifier id, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> trackerFactory) {
+    PlayerAbility(Identifier id, BiFunction<PlayerAbility, Player, AbilityTracker> trackerFactory) {
         this.id = id;
         this.trackerFactory = trackerFactory;
     }
@@ -64,14 +64,14 @@ public final class PlayerAbility {
      * @param player the player to get an {@code AbilityTracker} from
      * @return the tracker for this ability on the given player.
      */
-    public AbilityTracker getTracker(PlayerEntity player) {
+    public AbilityTracker getTracker(Player player) {
         return PlayerAbilityView.of(player).get(this);
     }
 
     /**
      * Returns {@code true} if this ability is currently enabled for the given {@code player}.
      */
-    public boolean isEnabledFor(PlayerEntity player) {
+    public boolean isEnabledFor(Player player) {
         return this.getTracker(player).isEnabled();
     }
 
@@ -86,7 +86,7 @@ public final class PlayerAbility {
      */
     @Contract("_ -> new")
     @ApiStatus.Internal
-    public AbilityTracker createTracker(PlayerEntity player) {
+    public AbilityTracker createTracker(Player player) {
         return this.trackerFactory.apply(this, player);
     }
 

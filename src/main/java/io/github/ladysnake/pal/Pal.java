@@ -20,8 +20,8 @@ package io.github.ladysnake.pal;
 import com.google.common.base.Suppliers;
 import io.github.ladysnake.pal.impl.PalInternals;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -70,7 +70,7 @@ public final class Pal implements ModInitializer {
      * @param reason  the reason for which the player should get the ability
      * @since 1.0.1
      */
-    public static void grantAbility(PlayerEntity player, PlayerAbility ability, AbilitySource reason) {
+    public static void grantAbility(Player player, PlayerAbility ability, AbilitySource reason) {
         reason.grantTo(player, ability);
     }
 
@@ -89,7 +89,7 @@ public final class Pal implements ModInitializer {
      * @param reason  the reason for which the player had the ability
      * @since 1.0.1
      */
-    public static void revokeAbility(PlayerEntity player, PlayerAbility ability, AbilitySource reason) {
+    public static void revokeAbility(Player player, PlayerAbility ability, AbilitySource reason) {
         reason.revokeFrom(player, ability);
     }
 
@@ -103,7 +103,7 @@ public final class Pal implements ModInitializer {
      * @throws NullPointerException if any of the arguments is null
      */
     public static AbilitySource getAbilitySource(String namespace, String name) {
-        return getAbilitySource(Identifier.of(namespace, name));
+        return getAbilitySource(Identifier.fromNamespaceAndPath(namespace, name));
     }
 
     /**
@@ -143,7 +143,7 @@ public final class Pal implements ModInitializer {
      * @see AbilitySource#DEFAULT
      * @see AbilitySource#CONSUMABLE
      * @see AbilityTracker#getActiveSource()
-     * @see AbilitySource#isActivelyGranting(PlayerEntity, PlayerAbility)
+     * @see AbilitySource#isActivelyGranting(Player, PlayerAbility)
      * @since 1.4.0
      */
     public static AbilitySource getAbilitySource(Identifier abilitySourceId, int priority) {
@@ -161,14 +161,14 @@ public final class Pal implements ModInitializer {
      * @throws NullPointerException if any of the arguments is null
      * @see #registerAbility(String, String, BiFunction)
      */
-    public static PlayerAbility registerAbility(String namespace, String path, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> factory) {
-        return registerAbility(Identifier.of(namespace, path), factory);
+    public static PlayerAbility registerAbility(String namespace, String path, BiFunction<PlayerAbility, Player, AbilityTracker> factory) {
+        return registerAbility(Identifier.fromNamespaceAndPath(namespace, path), factory);
     }
 
     /**
      * Registers a player ability that mods can interact with.
      *
-     * <p> A registered {@link AbilityTracker} will be accessible using {@link PlayerAbility#getTracker(PlayerEntity)}
+     * <p> A registered {@link AbilityTracker} will be accessible using {@link PlayerAbility#getTracker(Player)}
      * with the given {@code abilityId}. Said ability instance is attached to every player at construction time using
      * the given {@code factory}.
      *
@@ -179,7 +179,7 @@ public final class Pal implements ModInitializer {
      * @apiNote abilities must be registered during initialization.
      * @see SimpleAbilityTracker
      */
-    public static PlayerAbility registerAbility(Identifier abilityId, BiFunction<PlayerAbility, PlayerEntity, AbilityTracker> factory) {
+    public static PlayerAbility registerAbility(Identifier abilityId, BiFunction<PlayerAbility, Player, AbilityTracker> factory) {
         return PalInternals.registerAbility(new PlayerAbility(Objects.requireNonNull(abilityId), Objects.requireNonNull(factory)));
     }
 

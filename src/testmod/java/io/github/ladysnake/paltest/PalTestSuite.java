@@ -22,11 +22,11 @@ import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
-import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.test.GameTestException;
-import net.minecraft.test.TestContext;
-import net.minecraft.text.Text;
+import net.minecraft.gametest.framework.GameTestAssertException;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
 
@@ -35,26 +35,26 @@ public final class PalTestSuite {
     private static final AbilitySource TEST_SOURCE_2 = Pal.getAbilitySource(PalTest.id("test_source_2"));
 
     @GameTest()
-    public void grantingWorks(TestContext ctx) {
-        ServerPlayerEntity mockPlayer = createMockPlayer(ctx);
-        assertTrue(mockPlayer.getAbilities().allowModifyWorld, "Unexpected init state");
+    public void grantingWorks(GameTestHelper ctx) {
+        ServerPlayer mockPlayer = createMockPlayer(ctx);
+        assertTrue(mockPlayer.getAbilities().mayBuild, "Unexpected init state");
         Pal.grantAbility(mockPlayer, VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, TEST_SOURCE);
         Pal.grantAbility(mockPlayer, VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, TEST_SOURCE_2);
-        assertTrue(!mockPlayer.getAbilities().allowModifyWorld, "Ability granting did not work");
+        assertTrue(!mockPlayer.getAbilities().mayBuild, "Ability granting did not work");
         assertTrue(TEST_SOURCE.grants(mockPlayer, VanillaAbilities.LIMIT_WORLD_MODIFICATIONS), "Ability granting did not work");
         assertTrue(TEST_SOURCE_2.grants(mockPlayer, VanillaAbilities.LIMIT_WORLD_MODIFICATIONS), "Ability granting did not work");
         Pal.revokeAbility(mockPlayer, VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, TEST_SOURCE);
-        assertTrue(!mockPlayer.getAbilities().allowModifyWorld, "Revoking one source revoked the whole ability");
+        assertTrue(!mockPlayer.getAbilities().mayBuild, "Revoking one source revoked the whole ability");
         Pal.revokeAbility(mockPlayer, VanillaAbilities.LIMIT_WORLD_MODIFICATIONS, TEST_SOURCE_2);
-        assertTrue(mockPlayer.getAbilities().allowModifyWorld, "Revoking all sources did not revoke the whole ability");
-        ctx.complete();
+        assertTrue(mockPlayer.getAbilities().mayBuild, "Revoking all sources did not revoke the whole ability");
+        ctx.succeed();
     }
 
     private static void assertTrue(boolean b, String message) {
-        if (!b) throw new GameTestException(Text.literal(message), 0);
+        if (!b) throw new GameTestAssertException(Component.literal(message), 0);
     }
 
-    private ServerPlayerEntity createMockPlayer(TestContext ctx) {
-        return new ServerPlayerEntity(ctx.getWorld().getServer(), ctx.getWorld(), new GameProfile(UUID.randomUUID(), "test-mock-player"), SyncedClientOptions.createDefault());
+    private ServerPlayer createMockPlayer(GameTestHelper ctx) {
+        return new ServerPlayer(ctx.getLevel().getServer(), ctx.getLevel(), new GameProfile(UUID.randomUUID(), "test-mock-player"), ClientInformation.createDefault());
     }
 }

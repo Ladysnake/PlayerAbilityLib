@@ -19,12 +19,12 @@ package io.github.ladysnake.pal.impl;
 
 import io.github.ladysnake.pal.PlayerAbility;
 import io.github.ladysnake.pal.SimpleAbilityTracker;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.GameMode;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
@@ -32,9 +32,9 @@ import java.util.function.Predicate;
 
 public final class VanillaAbilityTracker extends SimpleAbilityTracker {
     private final AbilitySetter setter;
-    private final Predicate<PlayerAbilities> getter;
+    private final Predicate<Abilities> getter;
 
-    public VanillaAbilityTracker(PlayerAbility abilityId, PlayerEntity player, AbilitySetter setter, Predicate<PlayerAbilities> getter) {
+    public VanillaAbilityTracker(PlayerAbility abilityId, Player player, AbilitySetter setter, Predicate<Abilities> getter) {
         super(abilityId, player);
         this.setter = setter;
         this.getter = getter;
@@ -52,7 +52,7 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
 
     @Override
     protected void sync() {
-        this.player.sendAbilitiesUpdate();
+        this.player.onUpdateAbilities();
     }
 
     @Override
@@ -72,18 +72,18 @@ public final class VanillaAbilityTracker extends SimpleAbilityTracker {
         }
     }
 
-    private static GameMode getGamemode(PlayerEntity player) {
-        if (player.getEntityWorld().isClient()) {
-            PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getGameProfile().id());
-            return playerListEntry != null ? playerListEntry.getGameMode() : GameMode.SURVIVAL;
+    private static GameType getGamemode(Player player) {
+        if (player.level().isClientSide()) {
+            PlayerInfo playerListEntry = Objects.requireNonNull(Minecraft.getInstance().getConnection()).getPlayerInfo(player.getGameProfile().id());
+            return playerListEntry != null ? playerListEntry.getGameMode() : GameType.SURVIVAL;
         } else {
-            return ((ServerPlayerEntity) player).interactionManager.getGameMode();
+            return ((ServerPlayer) player).gameMode.getGameModeForPlayer();
         }
     }
 
     @FunctionalInterface
     public interface AbilitySetter {
         @Contract(mutates = "param2")
-        void set(GameMode g, PlayerAbilities abilities, boolean enabled);
+        void set(GameType g, Abilities abilities, boolean enabled);
     }
 }

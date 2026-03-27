@@ -20,10 +20,10 @@ package io.github.ladysnake.pal;
 import com.mojang.serialization.Codec;
 import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -40,11 +40,11 @@ import java.util.TreeSet;
  * @see AbilityTracker
  */
 public class SimpleAbilityTracker implements AbilityTracker {
-    protected final PlayerEntity player;
+    protected final Player player;
     protected final SortedSet<AbilitySource> abilitySources = new TreeSet<>();
     protected final PlayerAbility ability;
 
-    public SimpleAbilityTracker(PlayerAbility ability, PlayerEntity player) {
+    public SimpleAbilityTracker(PlayerAbility ability, Player player) {
         this.ability = ability;
         this.player = player;
     }
@@ -104,16 +104,16 @@ public class SimpleAbilityTracker implements AbilityTracker {
     }
 
     @Override
-    public void save(WriteView view) {
-        var list = view.getListAppender("ability_sources", Codec.STRING);
+    public void save(ValueOutput view) {
+        var list = view.list("ability_sources", Codec.STRING);
         for (AbilitySource abilitySource : this.abilitySources) {
             list.add(abilitySource.getId().toString());
         }
     }
 
     @Override
-    public void load(ReadView view) {
-        var list = view.getTypedListView("ability_sources", Codec.STRING);
+    public void load(ValueInput view) {
+        var list = view.listOrEmpty("ability_sources", Codec.STRING);
         for (var string : list) {
             AbilitySource source = PalInternals.getSource(Identifier.tryParse(string));
             if (source != null) {

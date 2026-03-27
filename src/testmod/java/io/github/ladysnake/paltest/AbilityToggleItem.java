@@ -20,15 +20,15 @@ package io.github.ladysnake.paltest;
 import io.github.ladysnake.pal.AbilitySource;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.PlayerAbility;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 
 /**
  * An item that toggles an arbitrary ability using PAL
@@ -37,30 +37,30 @@ public class AbilityToggleItem extends Item {
     private final PlayerAbility ability;
     private final AbilitySource abilitySource;
 
-    public AbilityToggleItem(Settings settings, PlayerAbility abilityId, Identifier abilitySourceId) {
+    public AbilityToggleItem(Properties settings, PlayerAbility abilityId, Identifier abilitySourceId) {
         super(settings);
         this.ability = abilityId;
         this.abilitySource = Pal.getAbilitySource(abilitySourceId);
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (user instanceof ServerPlayerEntity sp) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        if (user instanceof ServerPlayer sp) {
             if (abilitySource.grants(sp, this.ability)) { // check whether the source is granting the ability
                 abilitySource.revokeFrom(sp, this.ability); // if it is, revoke it
             } else {
                 abilitySource.grantTo(sp, this.ability);  // otherwise, grant it
             }
             // Feedback message
-            user.sendMessage(Text.literal("")
-                    .append(Text.literal(abilitySource.getId().toString()).styled(s -> s.withColor(Formatting.YELLOW)))
-                    .append(abilitySource.grants(sp, this.ability) ? Text.literal(" added").styled(s -> s.withColor(Formatting.GREEN)) : Text.literal(" removed").styled(s -> s.withColor(Formatting.RED)))
+            user.displayClientMessage(Component.literal("")
+                    .append(Component.literal(abilitySource.getId().toString()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)))
+                    .append(abilitySource.grants(sp, this.ability) ? Component.literal(" added").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal(" removed").withStyle(s -> s.withColor(ChatFormatting.RED)))
                     .append(" (")
-                    .append(Text.literal(this.ability.getId().toString()).styled(s -> s.withColor(Formatting.YELLOW)))
+                    .append(Component.literal(this.ability.getId().toString()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)))
                     .append(" is ")
-                    .append(ability.isEnabledFor(user) ? Text.literal("enabled").styled(s -> s.withColor(Formatting.GREEN)) : Text.literal("disabled").styled(s -> s.withColor(Formatting.RED)))
+                    .append(ability.isEnabledFor(user) ? Component.literal("enabled").withStyle(s -> s.withColor(ChatFormatting.GREEN)) : Component.literal("disabled").withStyle(s -> s.withColor(ChatFormatting.RED)))
                     .append(")"), false);
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

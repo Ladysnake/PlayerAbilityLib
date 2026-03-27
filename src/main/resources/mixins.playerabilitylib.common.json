@@ -4,8 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.7.11-SNAPSHOT",
   "mixins": [
-    "ServerPlayerEntityMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerGameModeMixin",
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

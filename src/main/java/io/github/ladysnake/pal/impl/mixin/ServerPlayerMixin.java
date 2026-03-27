@@ -24,21 +24,18 @@ import io.github.ladysnake.pal.VanillaAbilities;
 import io.github.ladysnake.pal.impl.PalInternals;
 import io.github.ladysnake.pal.impl.PlayerAbilityView;
 import io.github.ladysnake.pal.impl.VanillaAbilityTracker;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,19 +45,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity implements PlayerAbilityView {
+@Mixin(ServerPlayer.class)
+public abstract class ServerPlayerMixin extends Player implements PlayerAbilityView {
 
     @Unique
     private final Map<PlayerAbility, AbilityTracker> palAbilities = new LinkedHashMap<>();
 
-    public ServerPlayerEntityMixin(World world, GameProfile gameProfile) {
+    public ServerPlayerMixin(Level world, GameProfile gameProfile) {
         super(world, gameProfile);
     }
 
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(MinecraftServer server, ServerWorld world, GameProfile profile, SyncedClientOptions clientOptions, CallbackInfo ci) {
+    private void init(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions, CallbackInfo ci) {
         PalInternals.populate(this, this.palAbilities);
     }
 
@@ -82,21 +79,21 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
             }
         }
         if (syncVanilla) {
-            this.sendAbilitiesUpdate();  // batch vanilla abilities updates
+            this.onUpdateAbilities();  // batch vanilla abilities updates
         }
     }
 
-    @Inject(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V", shift = At.Shift.AFTER))
-    private void copyAbilitiesAfterRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
+    @Inject(method = "restoreFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;setGameModeForPlayer(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V", shift = At.Shift.AFTER))
+    private void copyAbilitiesAfterRespawn(ServerPlayer oldPlayer, boolean alive, CallbackInfo ci) {
         if (alive) {
-            var writeView = NbtWriteView.create(ErrorReporter.EMPTY, oldPlayer.getRegistryManager());
+            var writeView = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, oldPlayer.registryAccess());
             //noinspection ConstantConditions
-            ((ServerPlayerEntityMixin) (Object) oldPlayer).writeAbilitiesToData(writeView, null);
-            this.readAbilitiesFromData(NbtReadView.create(ErrorReporter.EMPTY, oldPlayer.getRegistryManager(), writeView.getNbt()), null);
+            ((ServerPlayerMixin) (Object) oldPlayer).writeAbilitiesToData(writeView, null);
+            this.readAbilitiesFromData(TagValueInput.create(ProblemReporter.DISCARDING, oldPlayer.registryAccess(), writeView.buildResult()), null);
         }
     }
 
-    @Inject(method = "sendAbilitiesUpdate", at = @At(value = "NEW", target = "(Lnet/minecraft/entity/player/PlayerAbilities;)Lnet/minecraft/network/packet/s2c/play/PlayerAbilitiesS2CPacket;"))
+    @Inject(method = "onUpdateAbilities", at = @At(value = "NEW", target = "(Lnet/minecraft/world/entity/player/Abilities;)Lnet/minecraft/network/protocol/game/ClientboundPlayerAbilitiesPacket;"))
     private void checkAbilityConsistency(CallbackInfo ci) {
         for (PlayerAbility ability : this.listPalAbilities()) {
             AbilityTracker tracker = this.get(ability);
@@ -106,23 +103,23 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
         }
     }
 
-    @Inject(method = "writeCustomData", at = @At("RETURN"))
-    private void writeAbilitiesToData(WriteView view, CallbackInfo ci) {
-        var list = view.getList("playerabilitylib:abilities");
+    @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
+    private void writeAbilitiesToData(ValueOutput view, CallbackInfo ci) {
+        var list = view.childrenList("playerabilitylib:abilities");
         for (Map.Entry<PlayerAbility, AbilityTracker> entry : this.palAbilities.entrySet()) {
-            var abilityTag = list.add();
+            var abilityTag = list.addChild();
             abilityTag.putString("ability_id", entry.getKey().getId().toString());
             entry.getValue().save(abilityTag);
         }
     }
 
     @Inject(
-        method = "readCustomData",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;readCustomData(Lnet/minecraft/storage/ReadView;)V", shift = At.Shift.AFTER)
+        method = "readAdditionalSaveData",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;readCustomData(Lnet/minecraft/world/level/storage/ValueInput;)V", shift = At.Shift.AFTER)
     )
-    private void readAbilitiesFromData(ReadView view, CallbackInfo ci) {
-        for (var abilityTag : view.getListReadView("playerabilitylib:abilities")) {
-            String abilityId = abilityTag.getString("ability_id", "");
+    private void readAbilitiesFromData(ValueInput view, CallbackInfo ci) {
+        for (var abilityTag : view.childrenListOrEmpty("playerabilitylib:abilities")) {
+            String abilityId = abilityTag.getStringOr("ability_id", "");
             if (!abilityId.isEmpty()) {
                 AbilityTracker tracker = this.palAbilities.get(PalInternals.getAbility(Identifier.tryParse(abilityId)));
                 if (tracker != null) {
